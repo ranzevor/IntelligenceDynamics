@@ -1,0 +1,15 @@
+{
+  "metadata": {
+    "run_id": "dal-synthetic",
+    "track": "B",
+    "system_name": "synthetic-population",
+    "environment_name": "synthetic-navigation",
+    "seed": 7,
+    "source_revision": "synthetic-fixture-1"
+  },
+  "scale": {
+    "task_instances": 8,
+    "trials": 5,
+    "trial_steps": 5
+  }
+}

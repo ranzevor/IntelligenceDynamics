@@ -1,0 +1,11 @@
+{
+  "metadata": {
+    "run_id": "forager-synthetic",
+    "track": "A",
+    "system_name": "synthetic-policy",
+    "environment_name": "synthetic-stream",
+    "seed": 7,
+    "source_revision": "synthetic-fixture-1"
+  },
+  "expected_rollout_steps": 2
+}

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 安全漏洞 / Security vulnerability
+    url: https://github.com/ranzevor/IntelligenceDynamics/security/advisories/new
+    about: 私密提交受影响版本与最小合成复现 / Report privately with a minimal synthetic reproduction.
+  - name: 使用文档 / Documentation
+    url: https://github.com/ranzevor/IntelligenceDynamics/blob/main/docs/software.md
+    about: 安装、命令、数据转换与构建步骤 / Installation, commands, conversion, and builds.

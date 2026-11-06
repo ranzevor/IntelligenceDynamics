@@ -1,0 +1,33 @@
+name: 缺陷报告 / Bug report
+description: 提供可复现的行为、环境和影响 / Describe reproducible behavior and impact.
+body:
+  - type: markdown
+    attributes:
+      value: 安全漏洞请使用 [私密报告](https://github.com/ranzevor/IntelligenceDynamics/security/advisories/new) 或 [安全说明](https://github.com/ranzevor/IntelligenceDynamics/blob/main/SECURITY.md) 中的邮箱。
+  - type: input
+    id: version
+    attributes:
+      label: 版本或提交 / Version or commit
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: 运行环境 / Environment
+      description: 操作系统、Python 版本、安装方式，以及涉及的可选依赖。
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 最小复现 / Minimal reproduction
+      description: 给出命令、合成输入和步骤；不要上传凭据、私密数据或模型权重。
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: 预期与实际行为 / Expected and actual behavior
+      description: 说明实际输出、数据或运行影响，附必要的已脱敏错误片段。
+    validations:
+      required: true

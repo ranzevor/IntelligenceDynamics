@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools==75.8.2", "wheel==0.45.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "intelligence-dynamics"
+version = "0.1.0"
+description = "Measurement and controlled experiments for adaptive systems."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+authors = [{name = "Ranzevor", email = "ranzevor@gmail.com"}]
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/ranzevor/IntelligenceDynamics"
+Documentation = "https://github.com/ranzevor/IntelligenceDynamics/blob/main/docs/software.md"
+Issues = "https://github.com/ranzevor/IntelligenceDynamics/issues"
+Security = "https://github.com/ranzevor/IntelligenceDynamics/security/policy"
+
+[project.scripts]
+intelligence-dynamics = "intelligence_dynamics.cli:main"
+
+[project.optional-dependencies]
+arrays = ["numpy==2.2.6"]
+
+[tool.setuptools]
+license-files = ["LICENSE", "LICENSE-NOTICE.md", "THIRD_PARTY_NOTICES.md"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+intelligence_dynamics = ["py.typed"]
+
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]

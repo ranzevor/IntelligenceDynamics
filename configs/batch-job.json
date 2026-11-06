@@ -1,0 +1,20 @@
+{
+  "target": {
+    "project": "example-project",
+    "region": "us-central1",
+    "service_account": "worker@example-project.iam.gserviceaccount.com",
+    "bucket": "example-results-bucket"
+  },
+  "image": "example.invalid/research@sha256:<supply-at-runtime>",
+  "arguments": [
+    "python",
+    "-m",
+    "intelligence_dynamics",
+    "demo",
+    "/mnt/results/demo.jsonl"
+  ],
+  "timeout_seconds": 3600,
+  "cpu_milli": 1000,
+  "memory_mib": 1024,
+  "machine_type": "e2-standard-2"
+}

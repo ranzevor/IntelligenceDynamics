@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software in research, please cite it using this metadata."
+type: software
+title: IntelligenceDynamics
+version: 0.1.0
+license: Apache-2.0
+repository-code: https://github.com/ranzevor/IntelligenceDynamics
+authors:
+  - family-names: Ranzevor
+    email: ranzevor@gmail.com

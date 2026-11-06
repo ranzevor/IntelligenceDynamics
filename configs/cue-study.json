@@ -1,0 +1,19 @@
+{
+  "mode": "buffered",
+  "seed": 7,
+  "train_seed": 101,
+  "heldout_seed": 202,
+  "pairs": 1,
+  "steps": 64,
+  "cue_count": 4,
+  "delay": 1,
+  "search": {
+    "population": 4,
+    "generations": 2,
+    "elites": 1,
+    "mutation": 0.15,
+    "update_cost": 0.05,
+    "corruption_rate": 0.1,
+    "noise_weight": 0.5
+  }
+}

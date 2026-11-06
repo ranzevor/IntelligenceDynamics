@@ -1,0 +1,5 @@
+-r requirements-build.lock
+-r requirements-arrays.lock
+-r requirements-lint.lock
+tomli==2.2.1; python_version < "3.11"
+pyyaml==6.0.3

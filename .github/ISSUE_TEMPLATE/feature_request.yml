@@ -1,0 +1,21 @@
+name: 功能建议 / Feature request
+description: 说明研究或使用任务，以及可检查的预期结果 / Describe a use case and expected result.
+body:
+  - type: textarea
+    id: use-case
+    attributes:
+      label: 使用任务 / Use case
+      description: 当前要完成什么，现有接口在哪一步受限？
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 建议行为 / Proposed behavior
+      description: 描述输入、输出、兼容要求和可核验的示例。
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 已尝试的方法 / Alternatives tried
