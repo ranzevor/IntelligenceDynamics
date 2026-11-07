@@ -40,7 +40,35 @@ class ReleaseToolTests(unittest.TestCase):
             with self.assertRaises(FileExistsError):
                 external_destination(source, existing)
             self.assertEqual(marker.read_text(encoding="utf-8"), "keep")
-            self.assertEqual(external_destination(source, parent / "new"), parent / "new")
+            self.assertEqual(
+                external_destination(source, parent / "new"), (parent / "new").resolve()
+            )
+
+    @unittest.skipUnless(os.name == "nt", "Windows short directory names")
+    def test_destination_resolves_short_directory_names(self):
+        import ctypes
+
+        get_short = ctypes.WinDLL("kernel32", use_last_error=True).GetShortPathNameW
+        get_short.argtypes = [ctypes.c_wchar_p, ctypes.c_wchar_p, ctypes.c_ulong]
+        get_short.restype = ctypes.c_ulong
+        with tempfile.TemporaryDirectory() as directory:
+            parent = Path(directory) / "release output parent with long name"
+            parent.mkdir()
+            buffer = ctypes.create_unicode_buffer(32768)
+            size = get_short(str(parent), buffer, len(buffer))
+            if not size:
+                raise ctypes.WinError(ctypes.get_last_error())
+            if size >= len(buffer):
+                raise RuntimeError("short directory path exceeded buffer")
+            if buffer.value.casefold() == str(parent).casefold():
+                self.skipTest("filesystem does not provide an 8.3 alias for this directory")
+            alias = Path(buffer.value)
+            self.assertTrue(alias.samefile(parent))
+            source = parent / "source"
+            source.mkdir()
+            result = external_destination(source, alias / "new")
+            self.assertEqual(result, (parent / "new").resolve())
+            self.assertFalse(result.exists())
 
     @unittest.skipUnless(os.name == "nt", "Windows directory junction")
     def test_destination_rejects_junction_ancestor(self):
@@ -301,6 +329,11 @@ class ReleaseToolTests(unittest.TestCase):
                 "-m",
                 "synthetic fixture",
             )
+            fixture_commit = git("rev-parse", "HEAD").decode().strip()
+            with patch.dict(os.environ, {"GITHUB_SHA": "0" * 40}):
+                with self.assertRaisesRegex(ValueError, "CI event commit"):
+                    build_release(root, parent / "wrong-event")
+            self.assertFalse((parent / "wrong-event").exists())
             module = root / "src/intelligence_dynamics/__init__.py"
             original = module.read_bytes()
 
@@ -311,7 +344,10 @@ class ReleaseToolTests(unittest.TestCase):
                 return result
 
             output = parent / "release"
-            with patch("tools.build_release.subprocess.run", side_effect=change_after_identity):
+            with (
+                patch.dict(os.environ, {"GITHUB_SHA": fixture_commit}),
+                patch("tools.build_release.subprocess.run", side_effect=change_after_identity),
+            ):
                 with self.assertRaisesRegex(ValueError, "captured Git commit"):
                     build_release(root, output)
             self.assertEqual(

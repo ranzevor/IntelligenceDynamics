@@ -4,17 +4,17 @@
 
 ## 安装
 
-核心包使用 Python 标准库，支持 Python 3.10 及以上。`requirements-build.lock` 固定官方 PyPI 索引上的精确构建工具版本；如 lock 包含 `--require-hashes`，pip 同时核对其中的完整 SHA-256；预期摘要应从可信发布来源取得。NumPy 2.2.6 是 NPZ 与原生数组状态接口的可选依赖，其发行物支持 Python 3.10–3.13。
+核心包使用 Python 标准库，支持 Python 3.10 及以上。`requirements-build.txt` 固定官方 PyPI 索引上的精确构建工具版本；如 lock 包含 `--require-hashes`，pip 同时核对其中的完整 SHA-256；预期摘要应从可信发布来源取得。NumPy 2.2.6 是 NPZ 与原生数组状态接口的可选依赖，其发行物支持 Python 3.10–3.13。
 
 ```bash
-python -m pip install -r requirements-build.lock
+python -m pip install -r requirements-build.txt
 python -m pip install --no-build-isolation --no-deps .
 ```
 
 启用 NPZ 接口：
 
 ```bash
-python -m pip install -r requirements-arrays.lock
+python -m pip install -r requirements-arrays.txt
 ```
 
 可用 `python -m intelligence_dynamics` 替代 `intelligence-dynamics`。所有示例均从项目根目录执行。输出文件默认拒绝覆盖，父目录需要预先存在。

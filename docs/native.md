@@ -8,7 +8,7 @@
 
 核心安装和合成对象示例只需 Python 标准库。数组状态需要 NumPy。默认 DRQN 数值后端使用 JAX；实际模型还需要其上游声明的 Haiku、Optax、Flashbax、Chex、Foragax 和其他依赖。
 
-DRQN 接口对照 [continual-foragax-agents](https://github.com/steventango/continual-foragax-agents) 公开的对象形状；DAL 字段合同对照 [DAL](https://github.com/trsjp/dal) 公开实现。项目内 JAX 状态编解码测试使用 Python 3.12 与 [`requirements-native.lock`](../requirements-native.lock) 的精确 CPU 依赖版本；连接 Foragax 模型仍需按调用方选择并审查的上游版本配置其额外依赖。软件许可见 [第三方通知](../THIRD_PARTY_NOTICES.md)。
+DRQN 接口对照 [continual-foragax-agents](https://github.com/steventango/continual-foragax-agents) 公开的对象形状；DAL 字段合同对照 [DAL](https://github.com/trsjp/dal) 公开实现。项目内 JAX 状态编解码测试使用 Python 3.12 与 [`requirements-native.txt`](../requirements-native.txt) 的精确 CPU 依赖版本；连接 Foragax 模型仍需按调用方选择并审查的上游版本配置其额外依赖。软件许可见 [第三方通知](../THIRD_PARTY_NOTICES.md)。
 
 | 对象 | 必需接口 |
 | --- | --- |

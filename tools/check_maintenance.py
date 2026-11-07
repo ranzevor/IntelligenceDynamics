@@ -105,7 +105,11 @@ def validate_action(reference: str) -> None:
 
 def validate_dependencies(root: Path) -> None:
     project = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))
-    lock_texts = {p.name: p.read_text(encoding="utf-8") for p in root.glob("requirements-*.lock")}
+    lock_texts = {
+        p.name: p.read_text(encoding="utf-8")
+        for p in root.glob("requirements-*.txt")
+        if p.name != "requirements-dev.txt"
+    }
     locks = {name: parse_lock(value) for name, value in lock_texts.items()}
     hash_modes = {
         name: any(
@@ -117,9 +121,9 @@ def validate_dependencies(root: Path) -> None:
     }
     build = dict(requirement(row) for row in project["build-system"]["requires"])
     arrays = dict(requirement(row) for row in project["project"]["optional-dependencies"]["arrays"])
-    if build != locks["requirements-build.lock"] or arrays != locks["requirements-arrays.lock"]:
+    if build != locks["requirements-build.txt"] or arrays != locks["requirements-arrays.txt"]:
         raise ValueError("project dependency declarations differ from locks")
-    if locks["requirements-native.lock"]["numpy"] != arrays["numpy"]:
+    if locks["requirements-native.txt"].get("numpy") != arrays["numpy"]:
         raise ValueError("native and optional NumPy versions differ")
     includes = set()
     packages = {}
@@ -148,9 +152,9 @@ def validate_dependencies(root: Path) -> None:
         if has_hash:
             hashed_packages.add(name)
     if includes != {
-        "requirements-build.lock",
-        "requirements-arrays.lock",
-        "requirements-lint.lock",
+        "requirements-build.txt",
+        "requirements-arrays.txt",
+        "requirements-lint.txt",
     }:
         raise ValueError("development dependency includes differ")
     if set(packages) != {"tomli", "pyyaml"}:
@@ -159,9 +163,6 @@ def validate_dependencies(root: Path) -> None:
         development_hash_mode or hashed_packages or any(hash_modes[name] for name in includes)
     ) and (hashed_packages != packages.keys() or not all(hash_modes[name] for name in includes)):
         raise ValueError("hash-required development dependencies include unhashed requirements")
-    native = list(requirement_lines((root / "requirements-native.txt").read_text(encoding="utf-8")))
-    if len(native) != 1 or included_requirement(native[0]) != "requirements-native.lock":
-        raise ValueError("native dependency manifest must include its lock")
 
 
 def validate_configuration(root: Path) -> None:

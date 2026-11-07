@@ -37,9 +37,7 @@ class MaintenanceTests(unittest.TestCase):
         project = Path(__file__).resolve().parents[1]
         for source in (
             project / "pyproject.toml",
-            project / "requirements-dev.txt",
-            project / "requirements-native.txt",
-            *project.glob("requirements-*.lock"),
+            *project.glob("requirements-*.txt"),
         ):
             shutil.copy2(source, root / source.name)
 
@@ -115,7 +113,7 @@ class MaintenanceTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "unhashed"):
                 validate_dependencies(root)
             dev.write_text(hashed_dev, encoding="utf-8")
-            arrays = root / "requirements-arrays.lock"
+            arrays = root / "requirements-arrays.txt"
             arrays.write_text(
                 arrays.read_text(encoding="utf-8").replace(hashes, ""), encoding="utf-8"
             )
@@ -151,9 +149,9 @@ class MaintenanceTests(unittest.TestCase):
             )
             validate_dependencies(root)
             text = path.read_text(encoding="utf-8").replace(
-                "-r requirements-build.lock", "--requirement=requirements-build.lock"
+                "-r requirements-build.txt", "--requirement=requirements-build.txt"
             )
-            text = text.replace("-r requirements-arrays.lock", "-rrequirements-arrays.lock")
+            text = text.replace("-r requirements-arrays.txt", "-rrequirements-arrays.txt")
             text = text.replace('python_version < "3.11"', "python_version<'3.11'")
             path.write_text(text, encoding="utf-8")
             validate_dependencies(root)
@@ -165,9 +163,9 @@ class MaintenanceTests(unittest.TestCase):
             path = root / "requirements-dev.txt"
             original = path.read_text(encoding="utf-8")
             invalid = (
-                original.replace("-r requirements-build.lock\n", ""),
-                original + "-r requirements-build.lock\n",
-                original.replace("requirements-lint.lock", "requirements-other.lock"),
+                original.replace("-r requirements-build.txt\n", ""),
+                original + "-r requirements-build.txt\n",
+                original.replace("requirements-lint.txt", "requirements-other.lock"),
                 original.replace('python_version < "3.11"', 'python_version < "3.12"'),
                 original + "pyyaml==6.0.3\n",
                 original + "unknown==1.0.0\n",
@@ -177,25 +175,35 @@ class MaintenanceTests(unittest.TestCase):
                     path.write_text(text, encoding="utf-8")
                     validate_dependencies(root)
 
-    def test_native_include_uses_dependency_semantics(self):
+    def test_native_requirements_preserve_versions_and_source(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             self.copy_dependency_files(root)
             path = root / "requirements-native.txt"
-            path.write_text(
-                "# native dependencies\n\n--requirement requirements-native.lock # locked\n",
-                encoding="utf-8",
-            )
+            original = path.read_text(encoding="utf-8")
+            native = parse_lock(original)
+            numpy = f"numpy=={native['numpy']}"
+            lines = list(reversed(original.splitlines()))
+            path.write_text("# native dependencies\n" + "\n".join(lines) + "\n", encoding="utf-8")
             validate_dependencies(root)
             for text in (
                 "",
-                "-r requirements-arrays.lock\n",
-                "-r requirements-native.lock\n-r requirements-native.lock\n",
-                "-r requirements-native.lock\nunknown==1.0.0\n",
+                original.replace("https://pypi.org/simple", "https://example.invalid/simple"),
+                original + numpy + "\n",
+                original.replace(numpy, "numpy>=2"),
+                original.replace(numpy + "\n", ""),
             ):
                 with self.subTest(text=text), self.assertRaises(ValueError):
                     path.write_text(text, encoding="utf-8")
                     validate_dependencies(root)
+            dependency = next(
+                line
+                for line in original.splitlines()
+                if line and not line.startswith("--") and not line.startswith("numpy==")
+            )
+            name, _ = dependency.split("==", 1)
+            path.write_text(original.replace(dependency, name + "==9999.0.0"), encoding="utf-8")
+            validate_dependencies(root)
 
     def test_updated_action_commit_is_allowed(self):
         validate_action("actions/setup-python@" + "1a" * 20)
