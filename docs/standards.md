@@ -1,9 +1,9 @@
-# 项目接口与质量合同 / Project interfaces and quality contracts
+# 开发与维护契约 / Development and maintenance contracts
 
-| 对象 / Area | 项目合同 / Project contract | 核验入口 / Verification entry |
+| 开发对象 / Development area | 接口与维护要求 / Interface and maintenance requirements | 实现与测试入口 / Implementation and test references |
 |---|---|---|
 | 测量数据 / Measurement data | JSONL 0.1 记录类型、缺失值、运行身份、严格 JSON 解析与原子写入 / JSONL 0.1 record types, missing values, run identity, strict JSON parsing, and atomic writes | [`data.md`](data.md), [`measurement-record.schema.json`](../configs/measurement-record.schema.json), `records.py`, `schema.py`, `storage.py`, `test_records_storage.py` |
-| 适应动力学 / Adaptive dynamics | 合成线索任务、延迟反馈、学习规则、训练/留出隔离、配对干预、共同时间支持与资源前沿 / synthetic cue tasks, delayed feedback, learning rules, train/heldout separation, paired interventions, common temporal support, and resource frontiers | [`research.md`](research.md), [`api-research.md`](api-research.md), `research/`, `metrics.py`, `test_research_*.py`, `test_metrics_adapters.py` |
+| 研究算法接口 / Research algorithm interfaces | 合成线索任务、延迟反馈、学习规则、训练/留出隔离、配对干预、共同时间支持与资源前沿 / synthetic cue tasks, delayed feedback, learning rules, train/heldout separation, paired interventions, common temporal support, and resource frontiers | [`api-research.md`](api-research.md), `research/`, `metrics.py`, `test_research_*.py`, `test_metrics_adapters.py` |
 | 原生模型接口 / Native model interfaces | DAL 诊断、Foragax 环境、DRQN 交互与更新调度、完整状态身份、checkpoint 续跑与选择性干预 / DAL diagnostics, Foragax environments, DRQN interaction and update scheduling, complete state identity, checkpoint continuation, and selective interventions | [`native.md`](native.md), `native/`, `state.py`, `test_native_*.py`, [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md) |
 | 运行与安全 / Runtime and security | 受限本地命令、声明产物检查、事务任务队列、Batch 请求构造、资源清理检查与认证 WSGI 控制面 / bounded local commands, declared-artifact inspection, transactional job queues, Batch request construction, resource-cleanup inspection, and an authenticated WSGI control surface | [`runtime.md`](runtime.md), [`SECURITY.md`](../SECURITY.md), `runtime/`, `test_runtime*.py`, `test_queue_recovery.py` |
 | 软件包与依赖 / Package and dependencies | Python 3.10+ 标准库核心、可选 NumPy 数组接口、固定构建与开发依赖、wheel 包与命令入口 / a Python 3.10+ standard-library core, optional NumPy array interfaces, pinned build and development dependencies, a wheel package, and a command entry point | [`software.md`](software.md), [`pyproject.toml`](../pyproject.toml), `requirements-*.txt`, `python -m unittest`, `ruff`, `pip wheel` |
@@ -18,7 +18,7 @@ IntelligenceDynamics 的每个进入发行或维护流程的版本必须在版�
 - **停止维护**：版本记录明确最后一个维护版本和停止接受的变更类别。已有运行产物、日志、队列状态或 checkpoint 不因状态变化自动删除或改写。
 - **退役版本与旧入口**：CLI、模块入口或控制端点在退役后不得接受新工作并返回成功。仍随离线包提供的旧入口返回非零或非 2xx 的明确退役响应；不兼容数据或 checkpoint 由读取器显式拒绝，不猜测升级。
 - **运行与队列**：退役开始后停止创建新运行和领取新任务。已接受任务按实际提供方状态完成、取消或进入可恢复的阻塞状态；幂等键、租约和终态保留，未知远端结果不得标为成功。
-- **日志与 checkpoint**：处置前由数据负责人选择导出、保留或删除范围，核对运行身份、格式、访问权限和已完成的导出。删除不改变审计结果；可信 codec 与私密数据边界继续适用。
+- **日志与 checkpoint**：处置前由数据负责人选择导出、保留或删除范围，核对运行身份、格式、访问权限和已完成的导出。导出按源数据的访问权限保存，checkpoint 由对应 codec 读取。
 - **托管、索引与凭据**：如存在托管端点或包索引制品，获授权的运营方停止入口、阻止新安装或任务提交，并记录制品状态。如存在服务身份、访问令牌或密钥，按其提供方撤销并核对失效；凭据不写入源码、日志或退役记录。
 - **安全报告渠道**：私密报告入口见 [SECURITY.md](../SECURITY.md)；版本退役时同步更新该入口的有效范围。
 
@@ -30,6 +30,6 @@ Every IntelligenceDynamics version entering distribution or maintenance must use
 - **End of maintenance:** Version notes identify the last maintained version and the categories of change no longer accepted. Existing run artifacts, logs, queue states, and checkpoints are not automatically deleted or rewritten by the status change.
 - **Retired versions and old entries:** A retired CLI, module entry, or control endpoint does not accept new work and report success. An old entry still shipped for offline use returns an explicit nonzero or non-2xx retirement response. Readers reject incompatible data or checkpoints explicitly rather than guessing an upgrade.
 - **Runs and queues:** Retirement stops new run creation and new queue claims. Accepted work reaches a real provider-confirmed completion, cancellation, or recoverable blocked state. Idempotency keys, leases, and terminal states remain intact, and an unknown remote result is not labelled successful.
-- **Logs and checkpoints:** Before disposition, the data owner chooses the export, retention, or deletion scope and verifies run identity, format, access authorization, and completed exports. Deletion does not rewrite audit outcomes; trusted-codec and private-data boundaries continue to apply.
+- **Logs and checkpoints:** Before disposition, the data owner chooses the export, retention, or deletion scope and verifies run identity, format, access authorization, and completed exports. Exports retain the source data access permissions, and checkpoints are read with their corresponding codec.
 - **Hosting, indexes, and credentials:** If hosted endpoints or package-index artifacts exist, an authorized operator stops the entry, prevents new installations or submissions, and records artifact status. If service identities, access tokens, or keys exist, they are revoked through their provider and checked for invalidation. Credentials do not enter source, logs, or retirement records.
 - **Security reporting:** Use the private channel in [SECURITY.md](../SECURITY.md) and update its valid scope when a version retires.

@@ -18,15 +18,15 @@ DRQN 接口对照 [continual-foragax-agents](https://github.com/steventango/cont
 | DRQN agent | `state`、`buffer.add/can_sample`、`phi`、`act`、`_carry_for_buffer`、`_start`、`_compute_reward_trace`、`encode_scalar_features`、`_update_state_with_metrics`、`_advance_update_clock`、`reward_clip` |
 | 原生 RLGlue 环境包装器 | `state`、`_start(state)`、`_step(state, action)` |
 
-DRQN 以单个 agent 为执行单位。批量训练状态必须先按其上游布局明确拆分，不能把并行批轴当成单个 agent。状态包含参数、目标参数、优化器、回放、PRNG、实时 carry、上一 transition、奖励轨迹、超参数和计数器。它们必须支持独立复制和显式 codec 回读。JAX typed key 使用 `key_data` 参与摘要，保留 PRNG 实现标识；Optax 命名元组保留类型。参数及数组要求有限，`hypers.freeze_steps` 可使用正无穷表示无冻结边界。
+DRQN 以单个 agent 为执行单位。批量训练状态按上游布局拆分后逐个执行。状态包含参数、目标参数、优化器、回放、PRNG、实时 carry、上一 transition、奖励轨迹、超参数和计数器。它们必须支持独立复制和显式 codec 回读。JAX typed key 使用 `key_data` 参与摘要，保留 PRNG 实现标识；Optax 命名元组保留类型。参数及数组要求有限，`hypers.freeze_steps` 可使用正无穷表示无冻结边界。
 
 `native_state_snapshot(value)` 返回类型敏感的摘要、每个数组的 shape/dtype/内容摘要，以及张量元素数和字节数。列表中的普通标量不计作张量存储。
 
-数组支持 NumPy 数值类型及 `ml_dtypes.bfloat16`；后者保留 `bfloat16` 语义类型，而非将其当作普通 void 字节。两者均执行非有限值检查。
+数组支持 NumPy 数值类型及 `ml_dtypes.bfloat16`，并保留 `bfloat16` 语义类型。两者均执行非有限值检查。
 
 ## DAL 个体诊断
 
-`dal_individual` 直接读取受评个体。原始 `nmnn.nn` 不需要新增 `stats` 属性：适配器对 `total_dw_list_nm` 和 `total_dw_list_rl` 求逐元素绝对值之和，并读取 `mean_active_rl_learning_rate`、`mutations_applied`。若对象已有完整 `stats`，也可直接消费。原始个体不携带父代包装器的 `is_unmutated_copy`，此时必须显式提供 `unmutated`，不能猜测。
+`dal_individual` 直接读取受评个体。对于原始 `nmnn.nn`，适配器对 `total_dw_list_nm` 和 `total_dw_list_rl` 求逐元素绝对值之和，并读取 `mean_active_rl_learning_rate`、`mutations_applied`。若对象已有完整 `stats`，也可直接消费。原始个体不携带父代包装器的 `is_unmutated_copy`，此时显式提供 `unmutated`。
 
 下面是可直接运行的合成对象例子。
 
@@ -83,7 +83,7 @@ if adapter.step(1) != first:
 print(first[0], first[1])
 ```
 
-`from_factory(factory, env_id, options=..., key=..., split=...)` 调用真实注册工厂。默认 `transition="step"` 使用环境公开包装器；显式 `transition="step_env"` 使用其底层转移，跳过包装器的自动重置和终止辅助逻辑。后者适合明确采用持续流语义的环境，不能静默替换成回合任务。适配器不注入 `is_terminated`。任何终止后的后续 step 都要求 reset。
+`from_factory(factory, env_id, options=..., key=..., split=...)` 调用真实注册工厂。默认 `transition="step"` 使用环境公开包装器；显式 `transition="step_env"` 使用其底层转移，跳过包装器的自动重置和终止辅助逻辑。持续流环境使用 `step_env`；回合任务通过 `step` 包装器处理终止与自动重置。任何终止后的后续 step 都要求 reset。
 
 ## 连接已安装的 DRQN
 
@@ -116,7 +116,7 @@ def connect_foragax_drqn(*, env_id, environment_options, agent_parameters,
 
 默认执行链依次推进环境、将上一 transition 加入原生 replay、计算奖励轨迹和标量特征、调用原生策略、按时钟决定 optimizer 更新，再推进 agent 时钟。实际采样、梯度、optimizer 和目标参数刷新由 agent 的 `_update_state_with_metrics` 执行。
 
-当实时 carry 为 `None`，`DRQNPolicy` 用当前已学习参数执行 `phi(..., carry=None)`，取其初始 carry 供下一条 replay 使用。实际 `act` 仍接收 `carry=None`。已有 replay、环境状态和 RNG 不因重置操作被改写。首次转移直接执行，不要求跨越 `None` 到张量的扫描 carry 具有相同结构。
+当实时 carry 为 `None`，`DRQNPolicy` 用当前已学习参数执行 `phi(..., carry=None)`，取其初始 carry 供下一条 replay 使用。实际 `act` 仍接收 `carry=None`。已有 replay、环境状态和 RNG 不因重置操作被改写。首次转移直接执行，完成 carry 从 `None` 到张量的初始化。
 
 更新判据使用转移前 `steps % update_freq == 0`，并同时要求 replay 可采样、允许学习且未达到原生 `freeze_steps`。更新数必须恰好增加零或一；未冻结 agent 的时钟必须恰好增加一。原生冻结边界会停止 agent 时钟与 epsilon 调度，但环境、动作和 replay 仍继续。起始 agent 时钟必须为正。
 
@@ -136,11 +136,11 @@ def checkpoint_from_running_glue(glue_state, full_history, *, terminated=False):
 
 `CheckpointStore` 的 codec 由调用者显式指定，必须保留完整状态、类型和历史。保存时先做 codec 往返验证，加载时先核容器长度与摘要，再解码并核全部状态身份。复制保留原 payload 字节。名称不能覆盖已有检查点，也不能穿越目录或符号链接。
 
-保存的往返验证另行比较实际数组类型及 JAX 弱类型属性，复制时也比较两次解码结果的这些属性。普通数组的既有摘要与 `native-checkpoint-v1` 格式保持不变，旧检查点无需迁移即可读取。v1 没有持久化数组后端类型指纹；旧摘要不能证明历史数组后端，读取时仍须使用原可信 codec。
+保存的往返验证另行比较实际数组类型及 JAX 弱类型属性，复制时也比较两次解码结果的这些属性。普通数组的既有摘要与 `native-checkpoint-v1` 格式保持不变，旧检查点无需迁移即可读取。v1 的持久化摘要记录数组数值类型、形状与内容，读取时的数组后端类型由 codec 重建。使用生成检查点时的可信 codec 加载。
 
-**codec 是可信代码边界。** Pickle 等 codec 可在解码时执行代码，只能读取来源可信且受控的检查点。摘要和 JSON 校验不提供身份认证，不把不可信 pickle 变安全。保存过程也会调用 decoder；不能为未知文件自动选择或导入 codec。
+保存和加载均会执行调用方指定的 codec，包括 decoder。Pickle 解码可执行代码；加载前通过受控存储或认证渠道核对来源，再使用已指定的可信 codec。容器长度、摘要和 JSON 格式用于内容完整性检查。
 
-下面定义完整分支流程，输入是已运行的 lifecycle、共同 checkpoint 和新建的可信 store。`additional` 包含首步探针。函数实际加载、按字节复制、仅重置 carry、保存并重载、执行首步和后续转移，最后核对共同历史。
+分支示例接收已运行的 lifecycle、共同 checkpoint 和新建的可信 store。`additional` 包含首步探针。流程依次加载并复制分支、重置 carry、保存并重载、执行后续转移，再核对共同历史。
 
 ```python
 from intelligence_dynamics.native import verify_common_history
@@ -173,7 +173,7 @@ def continue_carry_branches(lifecycle, common, store, *, additional=3):
     return control_final, reset_final, matched
 ```
 
-`learning=False` 禁止 optimizer 更新，保持参数、目标参数、优化器和更新数不变，仍收集 replay 并推进未冻结时钟。`freeze(checkpoint, paths)` 是另一种干预：每次转移后将所选字段恢复到捕获值。此时更新确实执行，更新数和指标记录该次计算，所选状态随后被固定。两者不能混称。
+`learning=False` 禁止 optimizer 更新，保持参数、目标参数、优化器和更新数不变，仍收集 replay 并推进未冻结时钟。`freeze(checkpoint, paths)` 是另一种干预：每次转移后将所选字段恢复到捕获值。此时更新确实执行，更新数和指标记录该次计算，所选状态随后被固定。
 
 字段路径可使用 dataclass 字段、可变映射键、序列索引和命名元组字段名。重叠路径、计数器修改、无变化的 reset、缺失字段或非选中字段变化均被拒绝。嵌套不可变 Mapping 不支持替换；命名元组替换保留实际类型。共同历史比较包括字段类型、数值和数组身份，缺失边界直接报错。
 

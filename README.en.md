@@ -65,43 +65,19 @@ intelligence-dynamics study configs/cue-study.json study.json
 
 For installation, verification, and removal of a wheel from the release page, see [release installation and recovery](docs/en/software.md#release-installation-and-recovery). See [Contributing](CONTRIBUTING.md) for feature requests, bug reports, and changes.
 
-## Development and tests
-
-```bash
-python -m pip install -r requirements-dev.txt
-python -m pip install --no-build-isolation --no-deps -e .
-python -B -m intelligence_dynamics check-source --workspace .
-python -B -m unittest discover -s tests -v
-python -B -O -m unittest discover -s tests -v
-python -B -OO -m unittest discover -s tests -v
-ruff check --no-cache .
-ruff format --check --no-cache .
-```
-
-Development tests also support Python 3.10, using pinned tomli to parse project configuration; Python 3.11 and later use standard-library tomllib. Workspace checks allow declared environment, cache, build, and run artifacts. The default delivery check still requires an exact source boundary. See the [build guide](docs/en/software.md#build) to prepare a source copy and build a wheel in a separate directory.
-
-The core runtime uses only the Python standard library. Dependency files pin exact versions from the official PyPI index, and pip applies its built-in download and installation integrity checks. NPZ and native array-state interfaces use pinned NumPy. External model-stack requirements are listed in [native model interfaces](docs/en/native.md). Deterministic project code generates the test fixtures.
-
-Test the native JAX state interfaces in a Python 3.12 CPU environment:
-
-```bash
-python -m pip install -r requirements-native.txt
-python -B -m unittest tests.test_native_state_codec_types -v
-```
-
 ## Documentation
 
 |Topic|Entry|
 |---|---|
 |Installation, commands, and examples|[Software guide](docs/en/software.md)|
 |Record types, missing values, and metrics|[Data contract](docs/en/data.md)|
-|Scientific questions, hypotheses, and evidence levels|[Research protocol](docs/en/research.md)|
+|Scientific questions, hypotheses, and experimental design|[Research design](docs/en/research.md)|
 |Task, policy, search, and intervention APIs|[Research API](docs/en/api-research.md)|
 |Native models, checkpoint storage, and continuation|[Native model interfaces](docs/en/native.md)|
 |Local execution, queues, and cloud interfaces|[Execution management](docs/en/runtime.md)|
 |Maintenance and dependency updates|[Contributing](CONTRIBUTING.md)|
 |Security and reporting issues|[Security](SECURITY.md)|
-|Project interface, deprecation, and retirement contracts|[Project contracts](docs/standards.md)|
+|Development interfaces, deprecation, and retirement|[Development and maintenance contracts](docs/standards.md)|
 |Licensing and material origins|[License notice](LICENSE-NOTICE.md)|
 
 ## Citation

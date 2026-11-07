@@ -65,43 +65,19 @@ intelligence-dynamics study configs/cue-study.json study.json
 
 使用发行页提供的 wheel 安装、校验或卸载时，见[安装与恢复](docs/software.md#发行安装与恢复)。功能建议、缺陷和贡献入口见[贡献指南](CONTRIBUTING.md)。
 
-## 开发与测试
-
-```bash
-python -m pip install -r requirements-dev.txt
-python -m pip install --no-build-isolation --no-deps -e .
-python -B -m intelligence_dynamics check-source --workspace .
-python -B -m unittest discover -s tests -v
-python -B -O -m unittest discover -s tests -v
-python -B -OO -m unittest discover -s tests -v
-ruff check --no-cache .
-ruff format --check --no-cache .
-```
-
-开发测试也支持 Python 3.10；该版本使用锁定的 tomli 解析项目配置，Python 3.11 及以上使用标准库 tomllib。工作区检查允许已声明的环境、缓存、构建与运行产物，默认的交付检查仍要求精确源码边界。创建源码副本并在独立目录构建 wheel 的步骤见[构建指南](docs/software.md#构建)。
-
-核心运行只用 Python 标准库。依赖文件固定官方 PyPI 上的精确版本，由 pip 在下载和安装时执行其内置完整性检查；NPZ 与原生数组状态接口使用锁定的 NumPy。模型接入所需的外部栈见 [原生模型接口](docs/native.md)。测试夹具由项目内的确定性代码生成。
-
-在 Python 3.12 的 CPU 环境中测试原生 JAX 状态接口：
-
-```bash
-python -m pip install -r requirements-native.txt
-python -B -m unittest tests.test_native_state_codec_types -v
-```
-
 ## 文档
 
 |主题|入口|
 |---|---|
 |安装、命令与示例|[软件指南](docs/software.md)|
 |记录类型、缺失值与指标|[数据契约](docs/data.md)|
-|科学问题、假设与证据层级|[研究协议](docs/research.md)|
+|科学问题、假设与实验设计|[研究设计](docs/research.md)|
 |任务、策略、搜索与干预 API|[研究 API](docs/api-research.md)|
 |原生模型、状态保存与续跑|[原生模型接口](docs/native.md)|
 |本地运行、队列与云接口|[运行管理](docs/runtime.md)|
 |维护与依赖更新|[贡献指南](CONTRIBUTING.md)|
 |安全与报告问题|[安全说明](SECURITY.md)|
-|项目接口、弃用与退役合同|[项目合同](docs/standards.md)|
+|开发接口、弃用与退役|[开发与维护契约](docs/standards.md)|
 |许可与材料来源|[许可说明](LICENSE-NOTICE.md)|
 
 ## 引用

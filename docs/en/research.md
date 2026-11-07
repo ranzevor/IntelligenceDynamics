@@ -1,10 +1,10 @@
-# Research questions and experimental contract
+# Research questions and experimental design
 
 [中文](../research.md) · [Research API](api-research.md)
 
 ## 1. Scientific question
 
-IntelligenceDynamics asks a falsifiable question: when systems must adapt in partially observed, changing environments while paying computation and memory costs, do engineering, evolutionary search, and natural evolution produce similar dynamical organization and causal effects? The comparison concerns how information persists, computation is allocated, and learning changes behavior, rather than numerical weights or visual resemblance.
+IntelligenceDynamics asks a falsifiable question: when systems must adapt in partially observed, changing environments while paying computation and memory costs, do engineering, evolutionary search, and natural evolution produce similar dynamical organization and causal effects? The comparison concerns how information persists, computation is allocated, and learning changes behavior.
 
 The strong hypothesis is that principles sufficient for broad continual adaptation admit a relatively compact description. The weaker hypothesis is that there are recurring organizational families, even without a unique architecture: persistent state, conditional computation, circuit reuse, multiple timescales, and local plasticity.
 
@@ -18,7 +18,7 @@ Competing explanations include equally efficient but unrelated organizations; ap
 - **Learning:** experience-dependent changes to behavior or update rules.
 - **Control:** selection of actions, computational resources, update timing, and stopping conditions.
 
-One dynamical system may implement these functions together. `S[t+1] = F(S[t], O[t], A[t], M[t])` is a descriptive framework, not a requirement for separate prediction, routing, or world-model modules. Matched experiments determine whether conditional computation reduces recomputation and whether learning reduces future adaptation cost.
+One dynamical system can implement state, memory, computation, learning, and control together, with `S[t+1] = F(S[t], O[t], A[t], M[t])` describing its evolution. Matched experiments determine whether conditional computation reduces recomputation and whether learning reduces future adaptation cost.
 
 ## 2. Three research tracks
 
@@ -28,13 +28,11 @@ One dynamical system may implement these functions together. `S[t+1] = F(S[t], O
 | B: evolution and discovery | Learning rules, gating, modulation, memory, and organization-generating rules | Search over inherited parameters, lifetime learning, independent environment evaluation | Learning-mechanism search versus fixed-policy search with matched budgets |
 | C: biology and mechanism extraction | Connectivity, activity, and intervention data | Extract implementation-neutral descriptors and compare perturbation responses | Local control, long-range coordination, reuse, persistence, and resource constraints |
 
-Track A progressively compares task-ID routing, observation-inferred routing, persistent-state routing, and routing without explicit boundaries. Track B separately tests dependence on reward density, task labels, global updates, and fixed topology. Changing several of these at once does not isolate one mechanism. Track C distinguishes structural evidence, simulated dynamics, recorded activity, and causal intervention; graph-based influence estimates and direct neural interventions answer different questions.
+Track A progressively compares task-ID routing, observation-inferred routing, persistent-state routing, and routing without explicit boundaries. Track B uses separate controls for reward density, task labels, global updates, and fixed topology to distinguish individual dependencies from interactions. Track C distinguishes structural evidence, simulated dynamics, recorded activity, and causal intervention; graph-based influence estimates and direct neural interventions answer different questions.
 
-Discovery processes must be independent. A structure imposed on every candidate cannot be counted as independently emergent. Biological systems provide naturally formed comparators, with historical and physical constraints that also require consideration.
+Use independent discovery processes for the three tracks and record predefined candidate structure separately from structure formed during search. Biological systems provide naturally formed comparators, with historical and physical constraints that also require consideration. Cross-track comparisons use operational definitions at the same abstraction level and present structural observations, dynamical responses, and intervention results separately.
 
 ## 3. Hypothesis matrix
-
-These are predictions to test. H identifiers denote scientific questions, not completion order or evidence grades.
 
 | Hypothesis | Observable prediction and main test | Alternative or weakening condition | Tracks |
 |---|---|---|---|
@@ -51,7 +49,7 @@ These are predictions to test. H identifiers denote scientific questions, not co
 | H11 Sufficient principles may form a limited set of organizational families | Independent implementations form stable organizational clusters with corresponding causal signatures | Clusters depend on metric choice; there are no stable clusters or only one effective architecture | A, B, C |
 | H12 Learning reduces future adaptation cost | Related recurring changes require fewer recovery interactions or operations while capability is maintained | Knowledge increases without lower recovery cost; changes themselves become easier | A, B |
 
-Initial measurement priorities are persistent state, maintained plasticity, conditional computation, reuse, and timescales. Predictive coding, spiking networks, world models, and developmental topology are candidate implementation families rather than prerequisites.
+Initial measurement priorities are persistent state, maintained plasticity, conditional computation, reuse, and timescales. Predictive coding, spiking networks, world models, and developmental topology are candidate implementation families for comparison.
 
 ## 4. Tasks and information boundaries
 
@@ -59,13 +57,13 @@ Initial measurement priorities are persistent state, maintained plasticity, cond
 
 The built-in observation contains only a discrete cue, and the action is binary. The current cue-to-correct-action mapping is hidden and may change at specified lifetime times. Feedback for action `t` arrives before action `t + delay + 1` and identifies the original action credit. Evaluation records include hidden state and immediate correctness; policies do not receive those fields.
 
-Scenario banks contain stationary and switching conditions, with mirrored pairs sharing cue sequences and having opposite target mappings. Every deterministic fixed cue policy has mean accuracy 0.5 across a mirrored pair. Mirroring controls initial-mapping preference; it does not replace broad task distributions or external environment evaluation.
+Scenario banks contain stationary and switching conditions, with mirrored pairs sharing cue sequences and having opposite target mappings. Every deterministic fixed cue policy has mean accuracy 0.5 across a mirrored pair. Mirroring controls initial-mapping preference.
 
 Inherited objects contain initial preferences and update-rule parameters. Value tables, outstanding credits, gate windows, and accumulators reset at each lifetime. Search uses training scenarios only. Random-control probabilities are calibrated on training data. Final evaluation scenarios are not used to select candidates or tune thresholds.
 
 ### Mechanism comparisons
 
-Fixed, always-updating, instantaneous conditional, leaky-accumulator, persistence, buffered-persistence, and random-gating policies share the feedback interface. Persistence requires enough high-error events within a window. Buffered persistence additionally retains eligible earlier credits and commits them upon confirmation. Updates are attributed to the originating feedback, not to the corruption label at commitment time.
+Fixed, always-updating, instantaneous conditional, leaky-accumulator, persistence, buffered-persistence, and random-gating policies share the feedback interface. Persistence requires enough high-error events within a window. Buffered persistence additionally retains eligible earlier credits and commits them upon confirmation. Attribute updates to the originating feedback.
 
 Isolated and burst corruption test individual erroneous feedback and temporally clustered errors. The rate parameter is an attempted-start probability; the realized fraction of flipped feedback is reported separately. When only isolated corruption enters training fitness, burst corruption can serve as a stress condition excluded from fitness.
 
@@ -79,13 +77,13 @@ Generate the common history once, before a predetermined action boundary. Copy t
 - **Reset a designated state once:** preserve parameters, optimizer, replay, randomness, and environment while changing that state.
 - **Reset gate memory:** clear accumulated error, recent flags, and credits awaiting confirmation, while preserving values and feedback credits not yet delivered.
 
-The built-in `reset_memory` performs the third operation, not a neural recurrent-state reset. A one-time reset is also different from disabling memory for the entire continuation. An intervention that changes no state is recorded as a no-op.
+Treat gate-memory reset, recurrent-state reset, and disabling memory throughout continuation as distinct interventions. Record an intervention that changes no state as a no-op.
 
-For late-life plasticity, compare continued and frozen learning over fixed continuation windows at predetermined ages: `P(t) = mean_reward_continued - mean_reward_frozen`. This measures the behavioral value of the learning path. Direct learnability tests additionally require comparable new perturbations. Gradients, losses, or weight changes alone do not fully define plasticity.
+For late-life plasticity, compare continued and frozen learning over fixed continuation windows at predetermined ages: `P(t) = mean_reward_continued - mean_reward_frozen`. This difference measures the behavioral value of the learning path. Test learnability with comparable new perturbations, measuring learning speed and achievable performance. Record gradients, losses, and weight changes as process measurements.
 
 ### Event support and fixed-time support
 
-An event response is the post-window mean minus the equal-width pre-window mean. If policies affect event occurrence, report event counts and timestamp overlap in each arm. Common-support analysis intersects eligible timestamps first, then applies one deterministic spacing rule to the shared set. With no shared events, that contrast is unidentified and returns `None`.
+An event response is the post-window mean minus the equal-width pre-window mean. If policies affect event occurrence, report event counts and timestamp overlap in each arm. Common-support analysis intersects eligible timestamps first, then applies one deterministic spacing rule to the shared set. When the shared-event set is empty, report each arm's event count and the empty intersection.
 
 Shared events may still be selected by treatment-induced behavior. Their contrast has a different estimand from a fixed-time effect. Fixed-time blocks do not condition on whether a post-intervention event occurred. State the direction of every contrast, retain both analyses, and do not replace a primary endpoint through post-outcome metric selection.
 
@@ -96,47 +94,31 @@ Shared events may still be selected by treatment-induced behavior. Their contras
 | Capability | Reward, success, or accuracy distributions; weakest conditions; lifetime trajectories | Preserve task-specific units |
 | Adaptation | Recovery interactions, recovery-curve area, computation and updating during recovery | Specify reference level, window, and observation horizon in advance |
 | Plasticity | Learning speed, achievable performance, and frozen controls for standardized perturbations at different ages | Distinguish forgetting from state construction |
-| Computation | Active operations, full-activation opportunities, updates, routing, and recurrence overhead | Activity ratios do not automatically measure energy efficiency |
+| Computation | Active operations, full-activation opportunities, updates, routing, and recurrence overhead | Measure computation and energy consumption separately |
 | Memory | Parameters, persistent state, replay, external history, and traffic | Separate storage capacity from access cost |
-| Organization | Reuse, local and long-range relationships, routing conditionality, timescales, and perturbation responses | Identical labels need not imply identical causal roles |
+| Organization | Reuse, local and long-range relationships, routing conditionality, timescales, and perturbation responses | Compare causal roles using matched intervention responses |
 
-Cross-system comparisons use Pareto frontiers over capability, adaptation, plasticity, computation, memory, and complexity. Search may use a prespecified scalar fitness, but evaluation must retain its components. That scalar is not a universal intelligence score.
+Cross-system comparisons use Pareto frontiers over capability, adaptation, plasticity, computation, memory, and complexity. Search can use a prespecified scalar fitness, and evaluation reports its components separately.
 
-## 7. Statistics and confirmatory contract
+## 7. Statistical analysis
 
 1. Before final data generation, specify hypotheses, primary endpoints, effect directions, thresholds or equivalence margins, joint decisions, seed counts, observation duration, exclusions, and missing-data handling.
 2. Independent training or evolutionary seeds are inferential units. Timesteps, events, and branches from one run are dependent. Resampling and permutation procedures must respect this hierarchy.
-3. Report every planned seed, paired contrasts, distributions, and suitable uncertainty intervals. Descriptive sign counts are not automatically significance tests.
-4. Separate exploratory and confirmatory data. Confirmation data cannot select mechanisms, random-control probabilities, resource weights, or decision thresholds. Additional analyses require explicit hypotheses and data roles.
-5. Nonfinite input is invalid numeric data. No observation, unrecovered behavior, zero denominators, and unidentified common support have different meanings. Preserve reasons and counts rather than replacing them with zero.
-6. `summarize` returns `None` for the mean whenever any observation is missing. A recovery latency of `None` means no qualifying recovery was observed or the available window was too short; interpret it with its window, not as an arbitrary large number.
-7. `assess` returns `True`, `False`, or `None` per threshold. For `all`, a definite failure determines failure; for `any`, a definite pass determines passage. Otherwise a combination containing missing values is undetermined. Passing thresholds supplies neither confidence intervals nor causal identification.
-8. Separate execution validity from scientific conclusions. Broken inputs, incorrect branching, and information leakage affect validity. Complete data that do not support a hypothesis remain scientific outcomes.
+3. Report every planned seed, paired contrasts, distributions, and suitable uncertainty intervals. Sign counts report contrast directions; significance tests follow the prespecified statistical model.
+4. Separate exploratory and confirmatory data. Use exploratory data to select mechanisms, random-control probabilities, resource weights, and decision thresholds; use confirmation data to test prespecified hypotheses. Additional analyses specify their hypotheses and data roles.
+5. No observation, unrecovered behavior, zero denominators, and an empty shared-event set have different meanings. Preserve their respective reasons and counts rather than replacing them with zero.
+6. When no recovery meets the threshold, report the reference level, observation window, and available duration.
+7. Record incomplete data, mismatched interventions, and information leakage separately. Retain complete data that do not support a hypothesis as scientific outcomes.
 
 Multiple-hypothesis analyses should prespecify priorities and multiplicity handling. Environment, optimizer, architecture, budget, and reasonable metric variations test whether common tasks or measurements induce apparent convergence.
 
-## 8. Evidence grades
+## 8. Study design
 
-| Grade | Definition |
-|---|---|
-| E0 | A single scientific run or qualitative observation |
-| E1 | Reproducible observations across seeds within one implementation and environment |
-| E2 | Robust results across environment, resource, or implementation variants within one track |
-| E3 | The same phenomenon independently observed in at least two tracks under a shared operational definition |
-| E4 | Cross-track observations accompanied by matched causal intervention responses |
-| E5 | Engineered, evolutionary, and biological sources causally aligned at the same abstraction level |
+Cross-track comparisons examine independent emergence, predictive value, resource trade-offs, and alternative explanations. Experiments on neural networks, connectome dynamics, circuit-reuse estimators, multi-scale resource frontiers, and cross-track intervention alignment use corresponding models and observations.
 
-Grades describe a particular body of research material; they are not automatically assigned to algorithms, software versions, or citations. Unit tests validate software. Cross-track convergence additionally requires independent emergence, predictive value, resource trade-offs, and tests of alternatives. Structural similarity alone cannot raise a grade.
+Studies follow their dependencies: validate inputs and measurement, establish continual-adaptation baselines, isolate state or update mechanisms, then compare resource frontiers and cross-track causal signatures. Native-model comparisons align the definitions of observations, states, actions, feedback, and random processes before comparing outcomes under common intervention conditions. Long-lived ecology and open-ended evolution define estimands for novelty, complexity, continual adaptation, and curriculum change separately.
 
-## 9. Current algorithms and subsequent study design
-
-Built-in algorithms cover finite synthetic tasks, rule-parameter search, feedback gating, matched branching, configured criteria, and sequence comparisons. Neural networks, connectome dynamics, circuit-reuse estimators, multi-scale resource frontiers, and cross-track intervention alignment require corresponding models and data.
-
-Studies follow their dependencies: validate inputs and measurement, establish continual-adaptation baselines, isolate state or update mechanisms, then compare resource frontiers and cross-track causal signatures. External native models first need explicit observation, state, action, feedback, and randomness contracts before auditable interventions. Long-lived ecology and open-ended evolution additionally require estimands for novelty, complexity, continual adaptation, and curriculum change.
-
-## 10. Academic sources
-
-These sources motivate questions or candidate mechanisms. Their findings retain their original task and model scope.
+## 9. Academic sources
 
 - **Forager, Tang et al., 2026.** A partially observable continual-RL environment with constant environment memory, including comparisons of plasticity and state construction. [Paper](https://arxiv.org/abs/2605.01131)
 - **Nevo-CRL, Li et al., 2026.** A fixed-capacity network uses task-specific masks, neuron reuse, and recycling. Explicit task structure remains a condition to test separately. [ICML paper](https://proceedings.mlr.press/v306/li26gb.html)

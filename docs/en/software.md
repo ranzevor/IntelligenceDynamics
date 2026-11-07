@@ -4,7 +4,7 @@
 
 ## Installation
 
-The core package uses the Python standard library and requires Python 3.10 or later. `requirements-build.txt` pins setuptools, wheel, and its transitive dependency packaging from the official PyPI index, using the same exact versions as the build requirements in `pyproject.toml` for isolated and non-isolated builds. When a lock includes `--require-hashes`, pip also verifies its complete SHA-256 values; obtain expected hashes from a trusted release source. NumPy 2.2.6 is optional for NPZ and native array-state interfaces; its distributions support Python 3.10–3.13.
+The core package uses the Python standard library and requires Python 3.10 or later. `requirements-build.txt` pins setuptools, wheel, and its transitive dependency packaging from the official PyPI index, using the same exact versions as the build requirements in `pyproject.toml` for isolated and non-isolated builds. NumPy 2.2.6 is optional for NPZ and native array-state interfaces; its distributions support Python 3.10–3.13.
 
 ```bash
 python -m pip install -r requirements-build.txt
@@ -36,7 +36,7 @@ Successful commands return 0; command or data errors return 2. A failed local pr
 
 ## Native data conversion
 
-The DAL example contains synthetic values:
+Convert the DAL example data:
 
 ```bash
 intelligence-dynamics convert dal-csv examples/dal.csv configs/dal-conversion.json dal.jsonl
@@ -63,13 +63,13 @@ Use `array-npz` for equally sampled one-dimensional arrays. Its configuration ac
 - `configs/dal-conversion.json`: run identity and generation-to-interaction scale.
 - `configs/forager-conversion.json`: run identity and expected rollout interval.
 - `configs/local-command.json`: a local command producing one JSON artifact.
-- `configs/batch-job.json`: a Batch request structure template. Its `image` field requires an immutable image reference obtained at runtime and supplied in a private copy. The template embeds no concrete digest and cannot be submitted directly.
+- `configs/batch-job.json`: a Batch request template. Fill in the project, bucket, and immutable image reference in a `local-config/` copy before generating a request; see [execution management](runtime.md#google-batch).
 
-Configuration is strict UTF-8 JSON. Duplicate keys, NaN, and Infinity are rejected. Configuration is not executed as Python code. Keep machine-private configuration in `local-config/` and run outputs in `runs/`. These directories and the documented default generated files are excluded from version control. Add ignore rules for custom output paths.
+Configuration is strict UTF-8 JSON. Duplicate keys, NaN, and Infinity are rejected. Keep machine-private configuration in `local-config/` and run outputs in `runs/`. These directories and the documented default generated files are excluded from version control. Add ignore rules for custom output paths.
 
 ## Build
 
-Install development dependencies and the editable project as shown in the [README](../../README.en.md#development-and-tests). Run the following commands from the project root in Bash or PowerShell. The source-copy and build directories must not exist and must be outside the project.
+Install development dependencies and the editable project as shown in [Contributing](../../CONTRIBUTING.md#development-workflow). Run the following commands from the project root in Bash or PowerShell. The source-copy and build directories must not exist and must be outside the project.
 
 ```bash
 python -B -m intelligence_dynamics check-source --workspace .

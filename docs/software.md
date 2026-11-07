@@ -4,7 +4,7 @@
 
 ## 安装
 
-核心包使用 Python 标准库，支持 Python 3.10 及以上。`requirements-build.txt` 固定官方 PyPI 索引上的 setuptools、wheel 及其传递依赖 packaging，与 `pyproject.toml` 的构建依赖保持相同精确版本，供隔离和非隔离构建使用；如 lock 包含 `--require-hashes`，pip 同时核对其中的完整 SHA-256；预期摘要应从可信发布来源取得。NumPy 2.2.6 是 NPZ 与原生数组状态接口的可选依赖，其发行物支持 Python 3.10–3.13。
+核心包使用 Python 标准库，支持 Python 3.10 及以上。`requirements-build.txt` 固定官方 PyPI 索引上的 setuptools、wheel 及其传递依赖 packaging，与 `pyproject.toml` 的构建依赖保持相同精确版本，供隔离和非隔离构建使用。NumPy 2.2.6 是 NPZ 与原生数组状态接口的可选依赖，其发行物支持 Python 3.10–3.13。
 
 ```bash
 python -m pip install -r requirements-build.txt
@@ -36,7 +36,7 @@ python -m pip install -r requirements-arrays.txt
 
 ## 原生数据转换
 
-DAL 示例完全由合成数值构成：
+转换 DAL 示例数据：
 
 ```bash
 intelligence-dynamics convert dal-csv examples/dal.csv configs/dal-conversion.json dal.jsonl
@@ -63,13 +63,13 @@ intelligence-dynamics validate forager.jsonl
 - `configs/dal-conversion.json`：运行身份和代数到交互量的尺度。
 - `configs/forager-conversion.json`：运行身份和预期 rollout 间隔。
 - `configs/local-command.json`：生成一个 JSON 产物的本地命令。
-- `configs/batch-job.json`：Batch 请求结构模板。`image` 明确要求调用方在私有副本中提供运行时取得的不可变镜像引用；模板本身不嵌入具体摘要，不能直接提交。
+- `configs/batch-job.json`：Batch 请求模板。在 `local-config/` 副本中填入项目、桶和不可变镜像引用后生成请求，见[运行管理](runtime.md#google-batch)。
 
-配置使用严格 UTF-8 JSON，不接受重复键、NaN 或 Infinity。配置不会作为 Python 代码执行。机器私有配置放在 `local-config/`，运行产物放在 `runs/`；这两个目录与文档中的默认生成文件已排除在版本控制之外。自定义输出路径需自行加入忽略规则。
+配置使用严格 UTF-8 JSON，不接受重复键、NaN 或 Infinity。机器私有配置放在 `local-config/`，运行产物放在 `runs/`；这两个目录与文档中的默认生成文件已排除在版本控制之外。自定义输出路径需自行加入忽略规则。
 
 ## 构建
 
-先按 [README](../README.md#开发与测试)安装开发依赖和 editable 项目。下列命令可用于 Bash 和 PowerShell，从项目根目录执行；源码副本和构建目录必须尚不存在，且位于项目外。
+先按[贡献指南](../CONTRIBUTING.md#开发流程)安装开发依赖和 editable 项目。下列命令可用于 Bash 和 PowerShell，从项目根目录执行；源码副本和构建目录必须尚不存在，且位于项目外。
 
 ```bash
 python -B -m intelligence_dynamics check-source --workspace .

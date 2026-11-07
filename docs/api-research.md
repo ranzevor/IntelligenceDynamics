@@ -1,6 +1,6 @@
 # 研究算法 API
 
-[English](en/api-research.md) · [研究契约](research.md)
+[English](en/api-research.md) · [研究设计](research.md)
 
 公开入口为 `intelligence_dynamics.research`。运行环境为 Python 3.10 或以上；本子包只使用标准库。下面每个 Python 代码块都可在包可导入的环境中独立运行。直接使用源码时，将项目的 `src` 目录加入 `PYTHONPATH`。
 
@@ -8,7 +8,7 @@
 
 ## 1. 类型与验证
 
-计数、时间、cue、动作编号与种子使用 Python 整数，不接受布尔值冒充整数。种子非负。数值参数须有限；概率在闭区间 0 到 1 内。无效取值通常抛出 `ValueError`，错误对象类型通常抛出 `TypeError`，无效生命周期操作抛出 `RuntimeError`。
+计数、时间、cue、动作编号与种子使用 Python 整数，不接受布尔值冒充整数。种子非负。数值参数须有限；概率在闭区间 0 到 1 内。取值、范围和序列格式校验失败抛出 `ValueError`。入口要求的配置、策略、反馈或 `Series` 对象类型错误时抛出 `TypeError`；未重置或已终止的任务继续推进时抛出 `RuntimeError`。
 
 `TaskConfig`、`LearningRule`、`Scenario`、`SearchConfig` 和结果 dataclass 为不可变对象。可配置序列在构造时转成元组，调用方后来修改输入列表不会改变配置。
 
@@ -57,7 +57,7 @@ print(fixed.accuracy, adaptive.accuracy)
 - 终止转移的 `observation` 为 `None`。重置前或终止后调用 `advance` 抛出异常。
 - `CueTask.time` 返回下一动作编号；`snapshot()` 返回可交由 `state_digest` 处理的环境状态记录。
 
-`record` 与 `snapshot()` 用于评估或分支检查，不是策略的观测接口。
+评估和分支检查读取 `record` 与 `snapshot()`；策略通过 `Observation(cue)` 接收观测。
 
 ## 3. 策略与学习规则
 
