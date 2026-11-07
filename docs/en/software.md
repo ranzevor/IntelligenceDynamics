@@ -4,17 +4,17 @@
 
 ## Installation
 
-The core package uses the Python standard library and requires Python 3.10 or later. `requirements-build.lock` pins exact build-tool versions from the official PyPI index. When a lock includes `--require-hashes`, pip also verifies its complete SHA-256 values; obtain expected hashes from a trusted release source. NumPy 2.2.6 is optional for NPZ and native array-state interfaces; its distributions support Python 3.10–3.13.
+The core package uses the Python standard library and requires Python 3.10 or later. `requirements-build.txt` pins exact build-tool versions from the official PyPI index. When a lock includes `--require-hashes`, pip also verifies its complete SHA-256 values; obtain expected hashes from a trusted release source. NumPy 2.2.6 is optional for NPZ and native array-state interfaces; its distributions support Python 3.10–3.13.
 
 ```bash
-python -m pip install -r requirements-build.lock
+python -m pip install -r requirements-build.txt
 python -m pip install --no-build-isolation --no-deps .
 ```
 
 Enable NPZ interfaces:
 
 ```bash
-python -m pip install -r requirements-arrays.lock
+python -m pip install -r requirements-arrays.txt
 ```
 
 `python -m intelligence_dynamics` is equivalent to `intelligence-dynamics`. Run examples from the project root. Outputs refuse overwriting by default, and parent directories must already exist.

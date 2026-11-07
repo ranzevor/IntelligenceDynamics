@@ -8,7 +8,7 @@
 
 The core installation and synthetic-object examples need only the Python standard library. Array state requires NumPy. The default DRQN numerical backend uses JAX; a real model additionally needs its upstream Haiku, Optax, Flashbax, Chex, Foragax and other dependencies.
 
-The DRQN interface follows the public object shapes in [continual-foragax-agents](https://github.com/steventango/continual-foragax-agents), and DAL fields follow the public [DAL](https://github.com/trsjp/dal) implementation. The in-project JAX state-codec tests use Python 3.12 and the exact CPU dependency versions in [`requirements-native.lock`](../../requirements-native.lock). Connecting a Foragax model still requires the additional dependencies of an upstream version selected and reviewed by the caller. Software licensing is recorded in [Third-party notices](../../THIRD_PARTY_NOTICES.md).
+The DRQN interface follows the public object shapes in [continual-foragax-agents](https://github.com/steventango/continual-foragax-agents), and DAL fields follow the public [DAL](https://github.com/trsjp/dal) implementation. The in-project JAX state-codec tests use Python 3.12 and the exact CPU dependency versions in [`requirements-native.txt`](../../requirements-native.txt). Connecting a Foragax model still requires the additional dependencies of an upstream version selected and reviewed by the caller. Software licensing is recorded in [Third-party notices](../../THIRD_PARTY_NOTICES.md).
 
 | Object | Required interface |
 | --- | --- |

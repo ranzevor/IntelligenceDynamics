@@ -48,7 +48,7 @@ Windows PowerShell:
 Install the core tools and run a synthetic measurement example:
 
 ```bash
-python -m pip install -r requirements-build.lock
+python -m pip install -r requirements-build.txt
 python -m pip install --no-build-isolation --no-deps .
 intelligence-dynamics demo demo.jsonl
 intelligence-dynamics validate demo.jsonl

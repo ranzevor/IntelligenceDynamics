@@ -48,7 +48,7 @@ Windows PowerShell：
 安装核心工具并运行合成测量示例：
 
 ```bash
-python -m pip install -r requirements-build.lock
+python -m pip install -r requirements-build.txt
 python -m pip install --no-build-isolation --no-deps .
 intelligence-dynamics demo demo.jsonl
 intelligence-dynamics validate demo.jsonl

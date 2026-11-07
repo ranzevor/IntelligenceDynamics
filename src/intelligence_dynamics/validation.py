@@ -54,11 +54,10 @@ docs/standards.md
 examples/dal.csv
 examples/make_array_fixture.py
 pyproject.toml
-requirements-arrays.lock
-requirements-build.lock
+requirements-arrays.txt
+requirements-build.txt
 requirements-dev.txt
-requirements-lint.lock
-requirements-native.lock
+requirements-lint.txt
 requirements-native.txt
 src/intelligence_dynamics/__init__.py
 src/intelligence_dynamics/__main__.py
