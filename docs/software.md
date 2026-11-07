@@ -4,7 +4,7 @@
 
 ## 安装
 
-核心包使用 Python 标准库，支持 Python 3.10 及以上。`requirements-build.txt` 固定官方 PyPI 索引上的精确构建工具版本；如 lock 包含 `--require-hashes`，pip 同时核对其中的完整 SHA-256；预期摘要应从可信发布来源取得。NumPy 2.2.6 是 NPZ 与原生数组状态接口的可选依赖，其发行物支持 Python 3.10–3.13。
+核心包使用 Python 标准库，支持 Python 3.10 及以上。`requirements-build.txt` 固定官方 PyPI 索引上的 setuptools、wheel 及其传递依赖 packaging，与 `pyproject.toml` 的构建依赖保持相同精确版本，供隔离和非隔离构建使用；如 lock 包含 `--require-hashes`，pip 同时核对其中的完整 SHA-256；预期摘要应从可信发布来源取得。NumPy 2.2.6 是 NPZ 与原生数组状态接口的可选依赖，其发行物支持 Python 3.10–3.13。
 
 ```bash
 python -m pip install -r requirements-build.txt

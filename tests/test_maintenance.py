@@ -1,4 +1,5 @@
 import importlib.util
+import json
 import shutil
 import tempfile
 import unittest
@@ -7,6 +8,7 @@ from pathlib import Path
 from tools.check_maintenance import (
     parse_lock,
     requirement,
+    tomllib,
     validate_action,
     validate_configuration,
     validate_dependencies,
@@ -40,6 +42,77 @@ class MaintenanceTests(unittest.TestCase):
             *project.glob("requirements-*.txt"),
         ):
             shutil.copy2(source, root / source.name)
+
+    def test_build_dependency_set_includes_controlled_transitive_dependency(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.copy_dependency_files(root)
+            project = root / "pyproject.toml"
+            lock = root / "requirements-build.txt"
+            original_project = project.read_text(encoding="utf-8")
+            original_lock = lock.read_text(encoding="utf-8")
+            requirements = tomllib.loads(original_project)["build-system"]["requires"]
+            for item in requirements:
+                with self.subTest(missing=item):
+                    remaining = [row for row in requirements if row != item]
+                    project.write_text(
+                        original_project.replace(json.dumps(requirements), json.dumps(remaining)),
+                        encoding="utf-8",
+                    )
+                    lock.write_text(original_lock.replace(item + "\n", ""), encoding="utf-8")
+                    with self.assertRaisesRegex(ValueError, "build dependency set"):
+                        validate_dependencies(root)
+
+    def test_build_dependency_versions_can_be_updated_together(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.copy_dependency_files(root)
+            project = root / "pyproject.toml"
+            lock = root / "requirements-build.txt"
+            versions = parse_lock(lock.read_text(encoding="utf-8"))
+            for path in (project, lock):
+                text = path.read_text(encoding="utf-8")
+                for name, version in versions.items():
+                    text = text.replace(f"{name}=={version}", f"{name}==99.0.0")
+                path.write_text(text, encoding="utf-8")
+            validate_dependencies(root)
+
+    def test_transitive_build_dependency_mismatch_and_floating_version_are_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.copy_dependency_files(root)
+            project = root / "pyproject.toml"
+            lock = root / "requirements-build.txt"
+            original_project = project.read_text(encoding="utf-8")
+            original_lock = lock.read_text(encoding="utf-8")
+            package = "packaging==" + parse_lock(original_lock)["packaging"]
+            project.write_text(
+                original_project.replace(package, "packaging==99.0.0"), encoding="utf-8"
+            )
+            with self.assertRaisesRegex(ValueError, "declarations differ"):
+                validate_dependencies(root)
+            for path, text in ((project, original_project), (lock, original_lock)):
+                path.write_text(text.replace(package, "packaging>=24.0"), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "exact version"):
+                validate_dependencies(root)
+
+    def test_duplicate_build_dependency_declaration_is_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.copy_dependency_files(root)
+            project = root / "pyproject.toml"
+            text = project.read_text(encoding="utf-8")
+            package = (
+                "packaging=="
+                + parse_lock((root / "requirements-build.txt").read_text(encoding="utf-8"))[
+                    "packaging"
+                ]
+            )
+            project.write_text(
+                text.replace(f'"{package}"', f'"{package}", "{package}"'), encoding="utf-8"
+            )
+            with self.assertRaisesRegex(ValueError, "duplicate build dependency"):
+                validate_dependencies(root)
 
     def test_complete_dependency_hashes_and_updates_are_allowed(self):
         for value in ("1a" * 32, "b2" * 32):

@@ -12,8 +12,9 @@ Project-owned code, documentation, configurations, examples, and artwork are lic
 |---|---|---|---|
 |Python|3.10+|核心运行 / Core runtime|PSF License|
 |NumPy|2.2.6|可选 NPZ 接口 / Optional NPZ interfaces|BSD-3-Clause；发行物内含各组件通知 / Component notices in distribution|
-|setuptools|75.8.2|构建 / Build|MIT|
-|wheel|0.45.1|构建工具 / Build tooling|MIT|
+|setuptools|84.1.0|构建 / Build|MIT|
+|wheel|0.48.0|构建工具 / Build tooling|MIT|
+|packaging|26.3|wheel 的构建传递依赖 / Transitive build dependency of wheel|Apache-2.0 OR BSD-2-Clause|
 |Ruff|0.14.2|格式与静态检查 / Formatting and lint|MIT|
 |tomli|2.2.1|仅 Python 3.10 开发测试的 TOML 解析 / TOML parsing for development tests on Python 3.10 only|MIT|
 |PyYAML|6.0.3|开发测试的 CI 与更新配置解析 / CI and update-configuration parsing in development tests|MIT|
