@@ -12,6 +12,8 @@
 
 外部贡献从 fork 的主题分支提交 PR 到 `main`。在 PR 中说明问题、变化、兼容影响与实际验证结果；讨论围绕可复现行为和具体证据。维护入口由 [Ranzevor](https://github.com/ranzevor) 管理。
 
+每个 PR 在合并前须由未参与该改动实现的审查者核查当前候选，结论在 PR Review 中关联具体提交或内容树。推送新改动后，复核变化及其影响；阻断问题关闭且当前 CI、技术审查和维护者批准齐备后再合并。单人维护时，维护者依据独立技术审查作最终合并决定。
+
 ## 开发流程
 
 在项目根目录的虚拟环境中安装开发依赖与项目：
@@ -91,6 +93,8 @@ Use exact dependency versions from the official PyPI index. Synchronize the buil
 Use the [issue forms](https://github.com/ranzevor/IntelligenceDynamics/issues/new/choose) for bugs and feature requests. Include version, environment, a minimal synthetic reproduction, and expected versus actual behavior. Use the private channels in [SECURITY.md](SECURITY.md) for vulnerabilities.
 
 Send external contributions from a topic branch in a fork to `main`. Explain the problem, change, compatibility impact, and actual validation in the PR. Discuss reproducible behavior and concrete evidence. [Ranzevor](https://github.com/ranzevor) maintains the repository.
+
+Before merging each PR, a reviewer who did not implement the change examines the current candidate and binds the conclusion to its commit or content tree in a PR Review. After further pushes, review the changes and their effects. Merge after blocking findings are closed and current CI, technical review, and maintainer approval are complete. For a single-maintainer repository, the maintainer makes the final merge decision based on the independent technical review.
 
 ## CI and dependency updates
 

@@ -116,7 +116,7 @@ def connect_foragax_drqn(*, env_id, environment_options, agent_parameters,
 
 默认执行链依次推进环境、将上一 transition 加入原生 replay、计算奖励轨迹和标量特征、调用原生策略、按时钟决定 optimizer 更新，再推进 agent 时钟。实际采样、梯度、optimizer 和目标参数刷新由 agent 的 `_update_state_with_metrics` 执行。
 
-当实时 carry 为 `None`，`DRQNPolicy` 用当前已学习参数执行 `phi(..., carry=None)`，取其初始 carry 供下一条 replay 使用。实际 `act` 仍接收 `carry=None`。已有 replay、环境状态和 RNG 不因重置操作被改写。首次转移直接执行，完成 carry 从 `None` 到张量的初始化。
+当实时 carry 为 `None`，`DRQNPolicy` 用当前已学习参数执行 `phi(..., carry=None)`，取其初始 carry 供下一条 replay 使用。实际 `act` 仍接收 `carry=None`。已有 replay、环境状态和 RNG 不因重置操作被改写。首次转移直接执行并初始化 carry。
 
 更新判据使用转移前 `steps % update_freq == 0`，并同时要求 replay 可采样、允许学习且未达到原生 `freeze_steps`。更新数必须恰好增加零或一；未冻结 agent 的时钟必须恰好增加一。原生冻结边界会停止 agent 时钟与 epsilon 调度，但环境、动作和 replay 仍继续。起始 agent 时钟必须为正。
 

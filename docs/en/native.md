@@ -116,7 +116,7 @@ def connect_foragax_drqn(*, env_id, environment_options, agent_parameters,
 
 The default execution chain advances the environment, adds the previous transition to native replay, computes reward traces and scalar features, executes the native policy, decides whether to update the optimizer, and advances the agent clock. The agent's `_update_state_with_metrics` performs actual sampling, gradients, optimizer updates and target-parameter refresh.
 
-When live carry is `None`, `DRQNPolicy` evaluates `phi(..., carry=None)` using the current learned parameters and retains its initial carry for the next replay entry. The actual `act` still receives `carry=None`. The reset itself does not rewrite existing replay, environment state or RNG. The first transition executes directly, initializing carry from `None` to a tensor.
+When live carry is `None`, `DRQNPolicy` evaluates `phi(..., carry=None)` using the current learned parameters and retains its initial carry for the next replay entry. The actual `act` still receives `carry=None`. The reset itself does not rewrite existing replay, environment state or RNG. The first transition executes directly and initializes carry.
 
 The update decision uses pre-transition `steps % update_freq == 0`, plus replay readiness, enabled learning and the native `freeze_steps` boundary. Updates must increase by exactly zero or one; an unfrozen agent clock must advance exactly once. The native freeze boundary stops the agent clock and epsilon schedule while environment interaction, policy action and replay collection continue. The initialized agent clock must be positive.
 

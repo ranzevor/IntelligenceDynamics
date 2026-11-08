@@ -30,7 +30,7 @@ One dynamical system can implement state, memory, computation, learning, and con
 
 Track A progressively compares task-ID routing, observation-inferred routing, persistent-state routing, and routing without explicit boundaries. Track B uses separate controls for reward density, task labels, global updates, and fixed topology to distinguish individual dependencies from interactions. Track C distinguishes structural evidence, simulated dynamics, recorded activity, and causal intervention; graph-based influence estimates and direct neural interventions answer different questions.
 
-Use independent discovery processes for the three tracks and record predefined candidate structure separately from structure formed during search. Biological systems provide naturally formed comparators, with historical and physical constraints that also require consideration. Cross-track comparisons use operational definitions at the same abstraction level and present structural observations, dynamical responses, and intervention results separately.
+Use independent discovery processes for the three tracks and record predefined structure, independently discovered organization, and intervention results separately. Structure imposed on every candidate is a design condition; its presence does not count as independent emergence. Interventions separately test its causal role. Biological systems provide naturally formed comparators, with historical and physical constraints that also require consideration. Cross-track comparisons use operational definitions at the same abstraction level and present structural observations, dynamical responses, and intervention results separately.
 
 ## 3. Hypothesis matrix
 
@@ -57,7 +57,7 @@ Initial measurement priorities are persistent state, maintained plasticity, cond
 
 The built-in observation contains only a discrete cue, and the action is binary. The current cue-to-correct-action mapping is hidden and may change at specified lifetime times. Feedback for action `t` arrives before action `t + delay + 1` and identifies the original action credit. Evaluation records include hidden state and immediate correctness; policies do not receive those fields.
 
-Scenario banks contain stationary and switching conditions, with mirrored pairs sharing cue sequences and having opposite target mappings. Every deterministic fixed cue policy has mean accuracy 0.5 across a mirrored pair. Mirroring controls initial-mapping preference.
+Scenario banks contain stationary and switching conditions, with mirrored pairs sharing cue sequences and having opposite target mappings. Every deterministic fixed cue policy has mean accuracy 0.5 across a mirrored pair. Mirrored controls address initial-mapping preference; cross-task generalization is tested across diverse task distributions and independent external environments.
 
 Inherited objects contain initial preferences and update-rule parameters. Value tables, outstanding credits, gate windows, and accumulators reset at each lifetime. Search uses training scenarios only. Random-control probabilities are calibrated on training data. Final evaluation scenarios are not used to select candidates or tune thresholds.
 
@@ -83,7 +83,7 @@ For late-life plasticity, compare continued and frozen learning over fixed conti
 
 ### Event support and fixed-time support
 
-An event response is the post-window mean minus the equal-width pre-window mean. If policies affect event occurrence, report event counts and timestamp overlap in each arm. Common-support analysis intersects eligible timestamps first, then applies one deterministic spacing rule to the shared set. When the shared-event set is empty, report each arm's event count and the empty intersection.
+An event response is the post-window mean minus the equal-width pre-window mean. If policies affect event occurrence, report event counts and timestamp overlap in each arm. Common-support analysis intersects eligible timestamps first, then applies one deterministic spacing rule to the shared set. With no selected common events, the common-support contrast is unidentified, and both arms' mean responses and their difference are missing. Report the eligible event count in each arm, the shared event count, and the selected event count separately.
 
 Shared events may still be selected by treatment-induced behavior. Their contrast has a different estimand from a fixed-time effect. Fixed-time blocks do not condition on whether a post-intervention event occurred. State the direction of every contrast, retain both analyses, and do not replace a primary endpoint through post-outcome metric selection.
 
@@ -113,6 +113,19 @@ Cross-system comparisons use Pareto frontiers over capability, adaptation, plast
 Multiple-hypothesis analyses should prespecify priorities and multiplicity handling. Environment, optimizer, architecture, budget, and reasonable metric variations test whether common tasks or measurements induce apparent convergence.
 
 ## 8. Study design
+
+### Comparison designs and criteria
+
+Specify the comparison question before selecting repetitions, variants, and interventions. Report each comparison below using the endpoints, effect directions, and thresholds or equivalence intervals specified in the statistical analysis plan.
+
+| Comparison question | Design and criteria |
+|---|---|
+| Single observation | Record the configuration, environment, trajectory, and target phenomenon from one scientific run or qualitative observation as the object for subsequent repetition and intervention. |
+| Multi-seed reproduction | Use independent training or evolutionary seeds with the same implementation and environment. Report all planned seed results, paired differences, and their distributions to test repeatability of the target phenomenon. |
+| Within-track robustness | Vary environments, resource budgets, or implementations within one track. Repeat comparisons under common operational definitions and report effects and failure conditions for each setting. |
+| Independent appearance in two tracks | Complete independent discovery in at least two tracks and test the same phenomenon at a common abstraction level with common operational definitions, distinguishing predefined organization from discovered organization. |
+| Cross-track causal responses | Apply matched interventions across tracks, preserve each comparison's common history and non-target factors, and compare response direction, magnitude, and predefined equivalence intervals. |
+| Causal alignment across three origins | Align operational definitions at the same abstraction level across engineering, evolution, and biology, then compare matched intervention responses and resource frontiers across all three. |
 
 Cross-track comparisons examine independent emergence, predictive value, resource trade-offs, and alternative explanations. Experiments on neural networks, connectome dynamics, circuit-reuse estimators, multi-scale resource frontiers, and cross-track intervention alignment use corresponding models and observations.
 

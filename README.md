@@ -4,7 +4,7 @@
 
 **面向持续适应系统的测量、学习规则实验与因果比较工具。**
 
-[English](README.en.md) · [发行下载](https://github.com/ranzevor/IntelligenceDynamics/releases) · [报告问题](https://github.com/ranzevor/IntelligenceDynamics/issues) · [安装与使用](docs/software.md) · [研究问题](docs/research.md) · [数据契约](docs/data.md) · [API](docs/api-research.md)
+[English](README.en.md) · [报告问题](https://github.com/ranzevor/IntelligenceDynamics/issues) · [安装与使用](docs/software.md) · [研究问题](docs/research.md) · [数据契约](docs/data.md) · [API](docs/api-research.md)
 
 [![Python 3.10 及以上](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat&logo=python&logoColor=white)](pyproject.toml) [![JSONL 协议 0.1](https://img.shields.io/badge/JSONL-0.1-blue?style=flat)](docs/data.md) [![Apache-2.0 许可](https://img.shields.io/badge/License-Apache--2.0-blue?style=flat)](LICENSE) [![CI main](https://img.shields.io/github/actions/workflow/status/ranzevor/IntelligenceDynamics/ci.yml?branch=main&style=flat&label=CI)](https://github.com/ranzevor/IntelligenceDynamics/actions/workflows/ci.yml)
 
@@ -27,9 +27,11 @@ IntelligenceDynamics 研究一个问题：在部分可观察、环境变化和�
 
 ## 快速开始
 
-需要 Python 3.10 或更高版本。先在项目根目录创建虚拟环境。
+需要 Python 3.10 或更高版本。获取源码并进入项目目录，创建虚拟环境：
 
 ```bash
+git clone https://github.com/ranzevor/IntelligenceDynamics.git
+cd IntelligenceDynamics
 python -m venv .venv
 ```
 
@@ -63,7 +65,7 @@ intelligence-dynamics summarize demo.jsonl
 intelligence-dynamics study configs/cue-study.json study.json
 ```
 
-使用发行页提供的 wheel 安装、校验或卸载时，见[安装与恢复](docs/software.md#发行安装与恢复)。功能建议、缺陷和贡献入口见[贡献指南](CONTRIBUTING.md)。
+本地构建的 wheel 安装、校验或卸载步骤见 [wheel 安装与恢复](docs/software.md#wheel-安装与恢复)。功能建议、缺陷和贡献入口见[贡献指南](CONTRIBUTING.md)。
 
 ## 文档
 

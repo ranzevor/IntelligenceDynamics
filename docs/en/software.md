@@ -6,6 +6,15 @@
 
 The core package uses the Python standard library and requires Python 3.10 or later. `requirements-build.txt` pins setuptools, wheel, and its transitive dependency packaging from the official PyPI index, using the same exact versions as the build requirements in `pyproject.toml` for isolated and non-isolated builds. NumPy 2.2.6 is optional for NPZ and native array-state interfaces; its distributions support Python 3.10–3.13.
 
+Get the source and enter the project directory:
+
+```bash
+git clone https://github.com/ranzevor/IntelligenceDynamics.git
+cd IntelligenceDynamics
+```
+
+Create and activate a virtual environment as shown in the [quick start](../../README.en.md#quick-start), then install the core tools:
+
 ```bash
 python -m pip install -r requirements-build.txt
 python -m pip install --no-build-isolation --no-deps .
@@ -85,9 +94,9 @@ Default `check-source ROOT` accepts only registered source and a valid root `.gi
 
 The wheel contains the `intelligence_dynamics` modules, type marker, full Apache-2.0 license, license notice, third-party notices, and command entry point. The source archive also provides tests, configurations, examples, and bilingual documentation. Verify installation in a fresh virtual environment, install the wheel, then run `demo`, `validate`, `summarize`, DAL conversion, and `study` from outside the project.
 
-## Release installation and recovery
+## Wheel installation and recovery
 
-Choose a specific version on the [release page](https://github.com/ranzevor/IntelligenceDynamics/releases) and download the wheel, complete source archive, `release-manifest.json`, and `SHA256SUMS`. The manifest records the source commit, file lengths, and hashes. Compare downloaded files with that version's SHA-256 list. The complete source archive supplies `configs/` and `examples/` for the documented examples.
+Build a local wheel as shown under [Build](#build). Example configurations and inputs are in the source tree's `configs/` and `examples/`; enter the source root when running those examples.
 
 In a fresh virtual environment, install from the directory containing the wheel:
 

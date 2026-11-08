@@ -6,6 +6,15 @@
 
 核心包使用 Python 标准库，支持 Python 3.10 及以上。`requirements-build.txt` 固定官方 PyPI 索引上的 setuptools、wheel 及其传递依赖 packaging，与 `pyproject.toml` 的构建依赖保持相同精确版本，供隔离和非隔离构建使用。NumPy 2.2.6 是 NPZ 与原生数组状态接口的可选依赖，其发行物支持 Python 3.10–3.13。
 
+获取源码并进入项目目录：
+
+```bash
+git clone https://github.com/ranzevor/IntelligenceDynamics.git
+cd IntelligenceDynamics
+```
+
+按[快速开始](../README.md#快速开始)创建并激活虚拟环境后，安装核心工具：
+
 ```bash
 python -m pip install -r requirements-build.txt
 python -m pip install --no-build-isolation --no-deps .
@@ -85,9 +94,9 @@ python -m pip wheel --no-build-isolation --no-deps ../IntelligenceDynamics-build
 
 wheel 包含 `intelligence_dynamics` 模块、类型标识、Apache-2.0 正式文本、许可说明、第三方通知与命令入口。源码包另含测试、配置、示例和双语文档。安装验证应使用新的虚拟环境，先安装 wheel，再从项目外运行 `demo`、`validate`、`summarize`、DAL 转换和 `study`。
 
-## 发行安装与恢复
+## wheel 安装与恢复
 
-从[发行页](https://github.com/ranzevor/IntelligenceDynamics/releases)选择具体版本，下载 wheel、完整源码包、`release-manifest.json` 和 `SHA256SUMS`。清单记录源码提交、文件长度及摘要；核对下载文件的 SHA-256 与该版本校验表。完整源码包提供运行示例所需的 `configs/` 和 `examples/`。
+按[构建](#构建)生成本地 wheel。示例配置和输入位于源码的 `configs/` 与 `examples/`；运行这些示例时进入源码根目录。
 
 在新的虚拟环境中，进入 wheel 所在目录安装核心工具：
 

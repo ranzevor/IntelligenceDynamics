@@ -4,7 +4,7 @@
 
 **Measurements, learning-rule experiments, and causal comparisons for continually adapting systems.**
 
-[中文](README.md) · [Releases](https://github.com/ranzevor/IntelligenceDynamics/releases) · [Issues](https://github.com/ranzevor/IntelligenceDynamics/issues) · [Installation and use](docs/en/software.md) · [Research questions](docs/en/research.md) · [Data contract](docs/en/data.md) · [API](docs/en/api-research.md)
+[中文](README.md) · [Issues](https://github.com/ranzevor/IntelligenceDynamics/issues) · [Installation and use](docs/en/software.md) · [Research questions](docs/en/research.md) · [Data contract](docs/en/data.md) · [API](docs/en/api-research.md)
 
 [![Python 3.10 and later](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat&logo=python&logoColor=white)](pyproject.toml) [![JSONL protocol 0.1](https://img.shields.io/badge/JSONL-0.1-blue?style=flat)](docs/en/data.md) [![Apache-2.0 license](https://img.shields.io/badge/License-Apache--2.0-blue?style=flat)](LICENSE) [![CI main](https://img.shields.io/github/actions/workflow/status/ranzevor/IntelligenceDynamics/ci.yml?branch=main&style=flat&label=CI)](https://github.com/ranzevor/IntelligenceDynamics/actions/workflows/ci.yml)
 
@@ -27,9 +27,11 @@ The tools measure capability, computation, memory, and continuing plasticity sep
 
 ## Quick start
 
-Python 3.10 or later is required. Create a virtual environment in the project root.
+Python 3.10 or later is required. Get the source, enter the project directory, and create a virtual environment:
 
 ```bash
+git clone https://github.com/ranzevor/IntelligenceDynamics.git
+cd IntelligenceDynamics
 python -m venv .venv
 ```
 
@@ -63,7 +65,7 @@ Run a synthetic experiment with training tasks, heldout tasks, and controls:
 intelligence-dynamics study configs/cue-study.json study.json
 ```
 
-For installation, verification, and removal of a wheel from the release page, see [release installation and recovery](docs/en/software.md#release-installation-and-recovery). See [Contributing](CONTRIBUTING.md) for feature requests, bug reports, and changes.
+For installation, verification, and removal of a locally built wheel, see [wheel installation and recovery](docs/en/software.md#wheel-installation-and-recovery). See [Contributing](CONTRIBUTING.md) for feature requests, bug reports, and changes.
 
 ## Documentation
 
