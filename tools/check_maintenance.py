@@ -119,7 +119,12 @@ def validate_dependencies(root: Path) -> None:
         )
         for name, value in lock_texts.items()
     }
-    build = dict(requirement(row) for row in project["build-system"]["requires"])
+    build_requirements = project["build-system"]["requires"]
+    build = dict(requirement(row) for row in build_requirements)
+    if len(build) != len(build_requirements):
+        raise ValueError("duplicate build dependency declaration")
+    if set(build) != {"setuptools", "wheel", "packaging"}:
+        raise ValueError("build dependency set must include setuptools, wheel and packaging")
     arrays = dict(requirement(row) for row in project["project"]["optional-dependencies"]["arrays"])
     if build != locks["requirements-build.txt"] or arrays != locks["requirements-arrays.txt"]:
         raise ValueError("project dependency declarations differ from locks")

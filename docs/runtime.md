@@ -8,11 +8,11 @@
 intelligence-dynamics run configs/local-command.json local-run
 ```
 
-输出目录必须不存在。运行器保存 `request.json`、`stdout.log`、`stderr.log` 和 `run.json`。命令使用 argv 数组，不通过 shell 拼接。默认请求记录只保存命令摘要与参数数量；需要保留已审查参数时，设置 `record_command=true`。结果包含退出码、耗时、声明产物的长度和 SHA256，以及可获得的单进程与进程树 RSS 采样峰值。未采到内存时为 `null`；采样峰值不是操作系统记录的全程峰值。测量错误与程序退出状态分别保存。
+输出目录必须不存在。运行器保存 `request.json`、`stdout.log`、`stderr.log` 和 `run.json`。命令使用 argv 数组，不通过 shell 拼接。默认请求记录只保存命令摘要与参数数量；需要保留已审查参数时，设置 `record_command=true`。结果包含退出码、耗时、声明产物的长度和 SHA256，以及可获得的单进程与进程树 RSS 采样峰值。内存峰值取自采样期间的 RSS 观测，未采到时为 `null`。测量错误与程序退出状态分别保存。
 
 产物格式支持 binary、JSON、测量 JSONL、SQLite、NPZ 和 LZMA。`Artifact` 可声明 JSON 必需字段、SQLite 必需表、NPZ 必需数组、轴长度和序列变更次数。压缩容器展开量受 `max_bytes` 限制，默认 256 MiB。LZMA 只检查容器，不反序列化其内容。SQLite 产物须先完成 checkpoint，且没有非空 WAL 或回滚日志，再通过只读 `quick_check` 检查；NPZ 拒绝对象数组和非有限数。路径必须是输出目录内的规范相对路径，不允许符号链接或 Windows 重解析点。格式检查与返回的长度、SHA-256 取自同一份有界快照；检查期间原件变化会被拒绝。
 
-超时终止 POSIX 进程组；命令退出后也清理该进程组。Windows 终止直接子进程，进程树隔离应由宿主 Job Object 或容器提供。运行器不是不可信代码沙箱。
+超时终止 POSIX 进程组；命令退出后也清理该进程组。Windows 终止直接子进程；需要进程树隔离时，配置宿主 Job Object 或容器。
 
 运行环境（包版本、Python 版本、操作系统与架构）保存在 `request.json` 的 `runtime` 字段。任务状态依据命令退出、声明产物检查和进程、日志清理结果判定；其他工作文件不参与产物验收。`run.json` 保存失败时，`run_command` 抛出 `RunPersistenceError`，其 `result` 属性保留已完成的运行结果。
 
@@ -33,13 +33,13 @@ RUNNING → CLEANUP_WAIT → ARTIFACT_WAIT → SUCCEEDED / FAILED
 未接受：CANCEL_SUBMITTING → CANCEL_RETRY / CANCEL_BLOCKED
 ```
 
-提交意图先持久化。提交响应未知时，下一次先按稳定 provider_id 查询，并核对规范摘要标签。未观察到任务且没有取消意图时，可用同一 ID 和幂等请求身份重试创建；一次未观察到不能证明原请求从未生效。取消期间不再发起创建，继续查询迟到的提交结果。
+提交意图先持久化。提交响应未知时，下一次先按稳定 provider_id 查询，并核对规范摘要标签。未观察到任务且没有取消意图时，可用同一 ID 和幂等请求身份重试创建；提交结果在查询到提供方任务状态前保持未知。取消期间不再发起创建，继续查询迟到的提交结果。
 
 取消调用先记录 `CANCEL_SUBMITTING` 意图和尝试次数。提供方接受后写入 `CANCEL_REQUESTED`，随后只查询状态与清理。超时、连接失败或可恢复 HTTP 错误进入 `CANCEL_RETRY`，每次重试前先查询远端；默认最多尝试三次。拒绝或重试耗尽后进入 `CANCEL_BLOCKED`，仍监测远端，不写入取消成功。处理失败原因后，可调用 `queue.retry_cancellation(request_id, now=...)` 重新允许有限次尝试。提供方必须支持针对稳定任务身份的幂等取消。
 
-只有提交前取消，或提供方明确报告 `CANCELLED` 且资源检查为空，才写入本地 `CANCELLED`。已接受取消后的暂时查无任务也不会替代终态确认。远端先完成时保留实际成功或失败结果。远端成功还必须通过资源清理和声明产物检查。产物默认最多检查三次，检查异常也计入次数；耗尽后标记失败。`execution_timeout` 从首次提交意图起计时，到期发起取消，最大七天。
+只有提交前取消，或提供方明确报告 `CANCELLED` 且资源检查为空，才写入本地 `CANCELLED`。已接受取消后暂时查无任务时继续查询。远端先完成时保留实际成功或失败结果。远端成功还必须通过资源清理和声明产物检查。产物默认最多检查三次，检查异常也计入次数；耗尽后标记失败。`execution_timeout` 从首次提交意图起计时，到期发起取消，最大七天。
 
-`Controller` 显式接收 provider、resources_present 和 artifacts_valid。后两者必须返回布尔值；没有实际检查不能用常量 True 代表云环境验收。租约时长需覆盖一次 provider 调用和产物检查；过期工作者的结果不会提交。
+`Controller` 显式接收 provider、resources_present 和 artifacts_valid。`resources_present` 查询任务资源是否仍存在，`artifacts_valid` 检查声明产物是否满足内容合同，两个回调均返回布尔值。租约时长需覆盖一次 provider 调用和产物检查；过期工作者的结果不会提交。
 
 ## Google Batch
 
@@ -55,9 +55,9 @@ intelligence-dynamics batch-spec local-config/batch-job.json batch-job.json
 
 `BatchClient` 提供 get、create、cancel。构造实例不会取凭据或连接网络。每次请求从调用方 token_provider 取得短期令牌，使用固定 HTTPS Batch API；create 同时使用稳定 jobId 与 UUID requestId。HTTP 重定向会被拒绝。
 
-`GoogleInspector` 按准确任务标签分页查询计算实例，并检查 JSON 对象的必要字段和规范化内容摘要。分页循环、查询失败及未解决的警告都作为错误，而非资源已清理。
+`GoogleInspector` 按准确任务标签分页查询计算实例，并检查 JSON 对象的必要字段和规范化内容摘要。分页循环、查询失败及未解决的警告抛出错误并中断本次检查。
 
-实际集成需提供执行身份、镜像仓库访问、输出桶、资源清理查询和产物验证。`resources_present` 应查询目标任务创建的计算资源，不能只看 Batch 状态。`artifacts_valid` 应检查预期对象和内容合同，不能只检查文件名存在。
+实际集成需提供执行身份、镜像仓库访问、输出桶、资源清理查询和产物验证。`resources_present` 查询目标任务创建的计算资源；`artifacts_valid` 检查预期对象的内容合同。
 
 接口依据：[Batch v1 Job](https://docs.cloud.google.com/batch/docs/reference/rest/v1/projects.locations.jobs)、[Create job](https://docs.cloud.google.com/batch/docs/reference/rest/v1/projects.locations.jobs/create)、[Cloud Storage 桶名](https://docs.cloud.google.com/storage/docs/buckets)。
 

@@ -18,15 +18,15 @@ The DRQN interface follows the public object shapes in [continual-foragax-agents
 | DRQN agent | `state`, `buffer.add/can_sample`, `phi`, `act`, `_carry_for_buffer`, `_start`, `_compute_reward_trace`, `encode_scalar_features`, `_update_state_with_metrics`, `_advance_update_clock`, `reward_clip` |
 | Native RLGlue environment wrapper | `state`, `_start(state)`, `_step(state, action)` |
 
-DRQN execution operates on one agent. Batched training state must first be explicitly separated according to its upstream layout; a parallel batch axis is not a single agent. State includes parameters, target parameters, optimizer, replay, PRNG, live carry, previous transition, reward traces, hyperparameters and counters. It must support detached copying and explicit codec round trips. JAX typed-key identity uses `key_data` and retains the PRNG implementation identifier. Optax namedtuple types are retained. Parameters and arrays must be finite; positive infinity is accepted for `hypers.freeze_steps` to indicate no freeze boundary.
+DRQN execution operates on one agent. Separate batched training state according to its upstream layout and execute each agent individually. State includes parameters, target parameters, optimizer, replay, PRNG, live carry, previous transition, reward traces, hyperparameters and counters. It must support detached copying and explicit codec round trips. JAX typed-key identity uses `key_data` and retains the PRNG implementation identifier. Optax namedtuple types are retained. Parameters and arrays must be finite; positive infinity is accepted for `hypers.freeze_steps` to indicate no freeze boundary.
 
 `native_state_snapshot(value)` returns a type-sensitive digest, each array's shape/dtype/content digest, and tensor element and byte counts. Ordinary scalar values in lists are not counted as tensor storage.
 
-Arrays support NumPy numeric dtypes and `ml_dtypes.bfloat16`. The latter retains its semantic `bfloat16` dtype rather than being treated as plain void bytes. Both undergo nonfinite-value checks.
+Arrays support NumPy numeric dtypes and `ml_dtypes.bfloat16`. The latter retains its semantic `bfloat16` dtype. Both undergo nonfinite-value checks.
 
 ## DAL individual diagnostics
 
-`dal_individual` reads an evaluated individual directly. An unmodified `nmnn.nn` does not need an added `stats` attribute: the adapter sums elementwise absolute values in `total_dw_list_nm` and `total_dw_list_rl`, and reads `mean_active_rl_learning_rate` and `mutations_applied`. An existing complete `stats` mapping is also accepted. Raw individuals do not contain the parent wrapper's `is_unmutated_copy`; provide `unmutated` explicitly rather than guessing it.
+`dal_individual` reads an evaluated individual directly. For an unmodified `nmnn.nn`, the adapter sums elementwise absolute values in `total_dw_list_nm` and `total_dw_list_rl`, and reads `mean_active_rl_learning_rate` and `mutations_applied`. An existing complete `stats` mapping is also accepted. Raw individuals do not contain the parent wrapper's `is_unmutated_copy`; provide `unmutated` explicitly.
 
 This synthetic-object example runs directly.
 
@@ -83,7 +83,7 @@ if adapter.step(1) != first:
 print(first[0], first[1])
 ```
 
-`from_factory(factory, env_id, options=..., key=..., split=...)` calls the actual registry factory. The default `transition="step"` uses the environment's public wrapper. Explicit `transition="step_env"` uses the underlying transition, bypassing wrapper autoreset and termination helpers. The latter is appropriate for an explicitly continuing-stream contract; it must not silently substitute for an episodic task. The adapter does not inject `is_terminated`. A transition after termination requires reset.
+`from_factory(factory, env_id, options=..., key=..., split=...)` calls the actual registry factory. The default `transition="step"` uses the environment's public wrapper. Explicit `transition="step_env"` uses the underlying transition, bypassing wrapper autoreset and termination helpers. Use `step_env` for continuing streams and the `step` wrapper for episodic termination and autoreset. A transition after termination requires reset.
 
 ## Connecting an installed DRQN
 
@@ -116,7 +116,7 @@ def connect_foragax_drqn(*, env_id, environment_options, agent_parameters,
 
 The default execution chain advances the environment, adds the previous transition to native replay, computes reward traces and scalar features, executes the native policy, decides whether to update the optimizer, and advances the agent clock. The agent's `_update_state_with_metrics` performs actual sampling, gradients, optimizer updates and target-parameter refresh.
 
-When live carry is `None`, `DRQNPolicy` evaluates `phi(..., carry=None)` using the current learned parameters and retains its initial carry for the next replay entry. The actual `act` still receives `carry=None`. The reset itself does not rewrite existing replay, environment state or RNG. The first transition executes directly, without requiring the `None`-to-tensor carry change to fit a fixed scan structure.
+When live carry is `None`, `DRQNPolicy` evaluates `phi(..., carry=None)` using the current learned parameters and retains its initial carry for the next replay entry. The actual `act` still receives `carry=None`. The reset itself does not rewrite existing replay, environment state or RNG. The first transition executes directly and initializes carry.
 
 The update decision uses pre-transition `steps % update_freq == 0`, plus replay readiness, enabled learning and the native `freeze_steps` boundary. Updates must increase by exactly zero or one; an unfrozen agent clock must advance exactly once. The native freeze boundary stops the agent clock and epsilon schedule while environment interaction, policy action and replay collection continue. The initialized agent clock must be positive.
 
@@ -136,11 +136,11 @@ def checkpoint_from_running_glue(glue_state, full_history, *, terminated=False):
 
 A caller explicitly supplies the `CheckpointStore` codec, which must preserve complete state, types and history. Save verifies a codec round trip. Load checks container size and digest before decoding, then checks complete typed state identity. Clone retains the original payload bytes. Names cannot overwrite existing checkpoints or traverse directories or symbolic links.
 
-Save separately compares actual array types and JAX weak-type attributes across the round trip; clone compares these attributes between its two decoded results. Existing ordinary-array digests and the `native-checkpoint-v1` format remain unchanged, so old checkpoints need no migration. V1 does not persist an array-backend type fingerprint: an old digest cannot prove the historical array backend, and loading still requires the original trusted codec.
+Save separately compares actual array types and JAX weak-type attributes across the round trip; clone compares these attributes between its two decoded results. Existing ordinary-array digests and the `native-checkpoint-v1` format remain unchanged, so old checkpoints need no migration. V1 persists array numeric dtype, shape, and content in its digest; the codec reconstructs the array backend type during loading. Load with the trusted codec used to create the checkpoint.
 
-**The codec is a trusted-code boundary.** Codecs such as pickle can execute code while decoding and must only read trusted, controlled checkpoints. Digests and JSON checks are not authentication and do not make untrusted pickle safe. Saving also invokes the decoder. Never automatically select or import a codec for an unknown file.
+Saving and loading both execute the caller-specified codec, including its decoder. Pickle decoding can execute code. Before loading, verify the source through controlled storage or an authenticated channel, then use the specified trusted codec. Container size, digests, and JSON validation check content integrity.
 
-The next function defines the complete branch procedure. Inputs are a running lifecycle, a common checkpoint and a new trusted store. `additional` includes the first-step probe. It loads and byte-copies branches, resets only carry, saves and reloads, executes the first and subsequent transitions, and checks common history.
+The branch example receives a running lifecycle, a common checkpoint, and a new trusted store. `additional` includes the first-step probe. The procedure loads and copies branches, resets carry, saves and reloads, executes continuation transitions, and checks common history.
 
 ```python
 from intelligence_dynamics.native import verify_common_history
@@ -173,7 +173,7 @@ def continue_carry_branches(lifecycle, common, store, *, additional=3):
     return control_final, reset_final, matched
 ```
 
-`learning=False` suppresses optimizer updates and retains parameters, target parameters, optimizer state and update count, while continuing replay collection and the unfrozen clock. `freeze(checkpoint, paths)` is a different intervention: after each transition it restores selected fields to their captured values. Updates still execute, and update counters and metrics record that computation before the selected state is clamped. These interventions are not interchangeable.
+`learning=False` suppresses optimizer updates and retains parameters, target parameters, optimizer state and update count, while continuing replay collection and the unfrozen clock. `freeze(checkpoint, paths)` is a different intervention: after each transition it restores selected fields to their captured values. Updates still execute, and update counters and metrics record that computation before the selected state is clamped.
 
 Field paths support dataclass fields, mutable mapping keys, sequence indices and namedtuple field names. Overlapping paths, counter changes, no-op resets, missing fields and changes outside selected fields are rejected. Nested immutable Mapping replacement is unsupported; namedtuple replacement retains its actual type. Common-history checks include field types, values and array identity. A missing boundary is an error.
 

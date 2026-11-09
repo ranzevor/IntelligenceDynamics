@@ -4,7 +4,16 @@
 
 ## 安装
 
-核心包使用 Python 标准库，支持 Python 3.10 及以上。`requirements-build.txt` 固定官方 PyPI 索引上的精确构建工具版本；如 lock 包含 `--require-hashes`，pip 同时核对其中的完整 SHA-256；预期摘要应从可信发布来源取得。NumPy 2.2.6 是 NPZ 与原生数组状态接口的可选依赖，其发行物支持 Python 3.10–3.13。
+核心包使用 Python 标准库，支持 Python 3.10 及以上。`requirements-build.txt` 固定官方 PyPI 索引上的 setuptools、wheel 及其传递依赖 packaging，与 `pyproject.toml` 的构建依赖保持相同精确版本，供隔离和非隔离构建使用。NumPy 2.2.6 是 NPZ 与原生数组状态接口的可选依赖，其发行物支持 Python 3.10–3.13。
+
+获取源码并进入项目目录：
+
+```bash
+git clone https://github.com/ranzevor/IntelligenceDynamics.git
+cd IntelligenceDynamics
+```
+
+按[快速开始](../README.md#快速开始)创建并激活虚拟环境后，安装核心工具：
 
 ```bash
 python -m pip install -r requirements-build.txt
@@ -36,7 +45,7 @@ python -m pip install -r requirements-arrays.txt
 
 ## 原生数据转换
 
-DAL 示例完全由合成数值构成：
+转换 DAL 示例数据：
 
 ```bash
 intelligence-dynamics convert dal-csv examples/dal.csv configs/dal-conversion.json dal.jsonl
@@ -63,13 +72,13 @@ intelligence-dynamics validate forager.jsonl
 - `configs/dal-conversion.json`：运行身份和代数到交互量的尺度。
 - `configs/forager-conversion.json`：运行身份和预期 rollout 间隔。
 - `configs/local-command.json`：生成一个 JSON 产物的本地命令。
-- `configs/batch-job.json`：Batch 请求结构模板。`image` 明确要求调用方在私有副本中提供运行时取得的不可变镜像引用；模板本身不嵌入具体摘要，不能直接提交。
+- `configs/batch-job.json`：Batch 请求模板。在 `local-config/` 副本中填入项目、桶和不可变镜像引用后生成请求，见[运行管理](runtime.md#google-batch)。
 
-配置使用严格 UTF-8 JSON，不接受重复键、NaN 或 Infinity。配置不会作为 Python 代码执行。机器私有配置放在 `local-config/`，运行产物放在 `runs/`；这两个目录与文档中的默认生成文件已排除在版本控制之外。自定义输出路径需自行加入忽略规则。
+配置使用严格 UTF-8 JSON，不接受重复键、NaN 或 Infinity。机器私有配置放在 `local-config/`，运行产物放在 `runs/`；这两个目录与文档中的默认生成文件已排除在版本控制之外。自定义输出路径需自行加入忽略规则。
 
 ## 构建
 
-先按 [README](../README.md#开发与测试)安装开发依赖和 editable 项目。下列命令可用于 Bash 和 PowerShell，从项目根目录执行；源码副本和构建目录必须尚不存在，且位于项目外。
+先按[贡献指南](../CONTRIBUTING.md#开发流程)安装开发依赖和 editable 项目。下列命令可用于 Bash 和 PowerShell，从项目根目录执行；源码副本和构建目录必须尚不存在，且位于项目外。
 
 ```bash
 python -B -m intelligence_dynamics check-source --workspace .
@@ -85,9 +94,9 @@ python -m pip wheel --no-build-isolation --no-deps ../IntelligenceDynamics-build
 
 wheel 包含 `intelligence_dynamics` 模块、类型标识、Apache-2.0 正式文本、许可说明、第三方通知与命令入口。源码包另含测试、配置、示例和双语文档。安装验证应使用新的虚拟环境，先安装 wheel，再从项目外运行 `demo`、`validate`、`summarize`、DAL 转换和 `study`。
 
-## 发行安装与恢复
+## wheel 安装与恢复
 
-从[发行页](https://github.com/ranzevor/IntelligenceDynamics/releases)选择具体版本，下载 wheel、完整源码包、`release-manifest.json` 和 `SHA256SUMS`。清单记录源码提交、文件长度及摘要；核对下载文件的 SHA-256 与该版本校验表。完整源码包提供运行示例所需的 `configs/` 和 `examples/`。
+按[构建](#构建)生成本地 wheel。示例配置和输入位于源码的 `configs/` 与 `examples/`；运行这些示例时进入源码根目录。
 
 在新的虚拟环境中，进入 wheel 所在目录安装核心工具：
 

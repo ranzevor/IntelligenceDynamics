@@ -1,6 +1,6 @@
 # Research API
 
-[中文](../api-research.md) · [Research contract](research.md)
+[中文](../api-research.md) · [Research design](research.md)
 
 The public entry point is `intelligence_dynamics.research`. Python 3.10 or later is required; the subpackage uses only the standard library. Every Python block below runs independently in an environment where the package is importable. For a source checkout, add the project's `src` directory to `PYTHONPATH`.
 
@@ -8,7 +8,7 @@ Results are dataclasses. Convert them with `dataclasses.asdict`, then serialize 
 
 ## 1. Types and validation
 
-Counts, times, cues, action identifiers, and seeds use Python integers; booleans are not accepted as integers. Seeds are nonnegative. Numeric parameters must be finite, and probabilities lie in the closed interval from 0 to 1. Invalid values generally raise `ValueError`, incorrect object types generally raise `TypeError`, and invalid lifecycle operations raise `RuntimeError`.
+Counts, times, cues, action identifiers, and seeds use Python integers; booleans are not accepted as integers. Seeds are nonnegative. Numeric parameters must be finite, and probabilities lie in the closed interval from 0 to 1. Value, range, and sequence-format validation failures raise `ValueError`. Incorrect configuration, policy, feedback, or series object types at their entry points raise `TypeError`. Advancing an uninitialized or terminated task raises `RuntimeError`.
 
 `TaskConfig`, `LearningRule`, `Scenario`, `SearchConfig`, and result dataclasses are immutable. Configurable sequences are converted to tuples at construction, so later changes to the caller's input lists do not change the configuration.
 
@@ -57,7 +57,7 @@ print(fixed.accuracy, adaptive.accuracy)
 - A terminal transition has `observation=None`. Calling `advance` before reset or after termination raises an exception.
 - `CueTask.time` is the next action index; `snapshot()` returns an environment-state record supported by state_digest.
 
-`record` and `snapshot()` are for evaluation or branch checks, not the policy observation interface.
+Evaluation and branch checks read `record` and `snapshot()`; policies receive observations through `Observation(cue)`.
 
 ## 3. Policies and learning rules
 

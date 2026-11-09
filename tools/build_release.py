@@ -505,7 +505,10 @@ def build_release(root: Path, destination: Path) -> dict:
         "build": {
             "python": sys.version,
             "platform": sys.platform,
-            "tools": {name: importlib.metadata.version(name) for name in ("setuptools", "wheel")},
+            "tools": {
+                name: importlib.metadata.version(name)
+                for name in ("setuptools", "wheel", "packaging")
+            },
         },
         "assets": [file_entry(p, p.name) for p in sorted(artifacts.iterdir())],
     }

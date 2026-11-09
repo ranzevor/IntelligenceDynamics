@@ -4,7 +4,16 @@
 
 ## Installation
 
-The core package uses the Python standard library and requires Python 3.10 or later. `requirements-build.txt` pins exact build-tool versions from the official PyPI index. When a lock includes `--require-hashes`, pip also verifies its complete SHA-256 values; obtain expected hashes from a trusted release source. NumPy 2.2.6 is optional for NPZ and native array-state interfaces; its distributions support Python 3.10–3.13.
+The core package uses the Python standard library and requires Python 3.10 or later. `requirements-build.txt` pins setuptools, wheel, and its transitive dependency packaging from the official PyPI index, using the same exact versions as the build requirements in `pyproject.toml` for isolated and non-isolated builds. NumPy 2.2.6 is optional for NPZ and native array-state interfaces; its distributions support Python 3.10–3.13.
+
+Get the source and enter the project directory:
+
+```bash
+git clone https://github.com/ranzevor/IntelligenceDynamics.git
+cd IntelligenceDynamics
+```
+
+Create and activate a virtual environment as shown in the [quick start](../../README.en.md#quick-start), then install the core tools:
 
 ```bash
 python -m pip install -r requirements-build.txt
@@ -36,7 +45,7 @@ Successful commands return 0; command or data errors return 2. A failed local pr
 
 ## Native data conversion
 
-The DAL example contains synthetic values:
+Convert the DAL example data:
 
 ```bash
 intelligence-dynamics convert dal-csv examples/dal.csv configs/dal-conversion.json dal.jsonl
@@ -63,13 +72,13 @@ Use `array-npz` for equally sampled one-dimensional arrays. Its configuration ac
 - `configs/dal-conversion.json`: run identity and generation-to-interaction scale.
 - `configs/forager-conversion.json`: run identity and expected rollout interval.
 - `configs/local-command.json`: a local command producing one JSON artifact.
-- `configs/batch-job.json`: a Batch request structure template. Its `image` field requires an immutable image reference obtained at runtime and supplied in a private copy. The template embeds no concrete digest and cannot be submitted directly.
+- `configs/batch-job.json`: a Batch request template. Fill in the project, bucket, and immutable image reference in a `local-config/` copy before generating a request; see [execution management](runtime.md#google-batch).
 
-Configuration is strict UTF-8 JSON. Duplicate keys, NaN, and Infinity are rejected. Configuration is not executed as Python code. Keep machine-private configuration in `local-config/` and run outputs in `runs/`. These directories and the documented default generated files are excluded from version control. Add ignore rules for custom output paths.
+Configuration is strict UTF-8 JSON. Duplicate keys, NaN, and Infinity are rejected. Keep machine-private configuration in `local-config/` and run outputs in `runs/`. These directories and the documented default generated files are excluded from version control. Add ignore rules for custom output paths.
 
 ## Build
 
-Install development dependencies and the editable project as shown in the [README](../../README.en.md#development-and-tests). Run the following commands from the project root in Bash or PowerShell. The source-copy and build directories must not exist and must be outside the project.
+Install development dependencies and the editable project as shown in [Contributing](../../CONTRIBUTING.md#development-workflow). Run the following commands from the project root in Bash or PowerShell. The source-copy and build directories must not exist and must be outside the project.
 
 ```bash
 python -B -m intelligence_dynamics check-source --workspace .
@@ -85,9 +94,9 @@ Default `check-source ROOT` accepts only registered source and a valid root `.gi
 
 The wheel contains the `intelligence_dynamics` modules, type marker, full Apache-2.0 license, license notice, third-party notices, and command entry point. The source archive also provides tests, configurations, examples, and bilingual documentation. Verify installation in a fresh virtual environment, install the wheel, then run `demo`, `validate`, `summarize`, DAL conversion, and `study` from outside the project.
 
-## Release installation and recovery
+## Wheel installation and recovery
 
-Choose a specific version on the [release page](https://github.com/ranzevor/IntelligenceDynamics/releases) and download the wheel, complete source archive, `release-manifest.json`, and `SHA256SUMS`. The manifest records the source commit, file lengths, and hashes. Compare downloaded files with that version's SHA-256 list. The complete source archive supplies `configs/` and `examples/` for the documented examples.
+Build a local wheel as shown under [Build](#build). Example configurations and inputs are in the source tree's `configs/` and `examples/`; enter the source root when running those examples.
 
 In a fresh virtual environment, install from the directory containing the wheel:
 
