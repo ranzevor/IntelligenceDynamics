@@ -35,12 +35,15 @@ from types import SimpleNamespace
 from intelligence_dynamics.native import dal_individual
 
 individual = SimpleNamespace(
-    individual_id=0, normalised_fitness=1.25,
+    individual_id=0,
+    normalised_fitness=1.25,
     connectivity_grid_a=[[0, 1], [0, 0]],
     connectivity_grid_m=[[[0, 1]]],
-    io_list_a=[(0, 1, 0.5)], io_list_m=[(0, 0, 1)],
+    io_list_a=[(0, 1, 0.5)],
+    io_list_m=[(0, 0, 1)],
     rl_learning_rate=0.02,
-    total_dw_list_nm=[[0.1, -0.2]], total_dw_list_rl=[[0.3]],
+    total_dw_list_nm=[[0.1, -0.2]],
+    total_dw_list_rl=[[0.3]],
     mean_active_rl_learning_rate=0.01,
     mutations_applied=["synthetic_change"],
 )
@@ -60,18 +63,24 @@ print(observed.activation_projections, observed.mean_susceptibility)
 from types import SimpleNamespace
 from intelligence_dynamics.native import ForagaxAdapter
 
+
 class SyntheticEnvironment:
     default_params = {"increment": 1}
+
     def action_space(self, params):
         return SimpleNamespace(n=2, sample=lambda key: key % 2)
+
     def reset(self, key, params):
         return [0], {"position": 0}
+
     def step(self, key, state, action, params):
         state = {"position": state["position"] + action + params["increment"]}
         return [state["position"]], state, float(action), False, {"key": key}
 
+
 adapter = ForagaxAdapter(
-    SyntheticEnvironment(), key=lambda seed: seed,
+    SyntheticEnvironment(),
+    key=lambda seed: seed,
     split=lambda key, count: (key + 1, key + 2),
 )
 adapter.reset(3)
@@ -93,20 +102,29 @@ print(first[0], first[1])
 from copy import deepcopy
 from intelligence_dynamics.native import DRQNExecutor, ForagaxAdapter, NativeLifecycle
 
-def connect_foragax_drqn(*, env_id, environment_options, agent_parameters,
-                        collector, seed, transition="step"):
+
+def connect_foragax_drqn(
+    *, env_id, environment_options, agent_parameters, collector, seed, transition="step"
+):
     import jax
     from foragax.registry import make
     from algorithms.nn.DRQN import DRQN
 
     environment = ForagaxAdapter.from_factory(
-        make, env_id, options=environment_options,
-        key=jax.random.key, split=jax.random.split, transition=transition,
+        make,
+        env_id,
+        options=environment_options,
+        key=jax.random.key,
+        split=jax.random.split,
+        transition=transition,
     )
     raw = environment.environment
     space = raw.observation_space(environment.params)
-    observations = (space.shape if hasattr(space, "shape")
-                    else {name: item.shape for name, item in space.spaces.items()})
+    observations = (
+        space.shape
+        if hasattr(space, "shape")
+        else {name: item.shape for name, item in space.spaces.items()}
+    )
     actions = int(raw.action_space(environment.params).n)
     agent = DRQN(observations, actions, deepcopy(agent_parameters), collector, seed)
     return NativeLifecycle(DRQNExecutor(agent, environment))
@@ -127,6 +145,7 @@ def connect_foragax_drqn(*, env_id, environment_options, agent_parameters,
 ```python
 from intelligence_dynamics.native import NativeCheckpoint, execution_state
 
+
 def checkpoint_from_running_glue(glue_state, full_history, *, terminated=False):
     return NativeCheckpoint(
         execution_state(glue_state, terminated=terminated),
@@ -144,6 +163,7 @@ def checkpoint_from_running_glue(glue_state, full_history, *, terminated=False):
 
 ```python
 from intelligence_dynamics.native import verify_common_history
+
 
 def continue_carry_branches(lifecycle, common, store, *, additional=3):
     if type(additional) is not int or additional < 1:
@@ -168,7 +188,9 @@ def continue_carry_branches(lifecycle, common, store, *, additional=3):
     reset_final = lifecycle.run(store.load("first"), interactions=additional - 1)
     control_final = lifecycle.run(control, interactions=additional)
     matched = verify_common_history(
-        control_final, reset_final, boundary=common.state.total_steps,
+        control_final,
+        reset_final,
+        boundary=common.state.total_steps,
     )
     return control_final, reset_final, matched
 ```

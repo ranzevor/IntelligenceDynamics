@@ -12,17 +12,17 @@ Project-owned code, documentation, configurations, examples, and artwork are lic
 |---|---|---|---|
 |Python|3.10+|核心运行 / Core runtime|PSF License|
 |NumPy|2.2.6|可选 NPZ 接口 / Optional NPZ interfaces|BSD-3-Clause；发行物内含各组件通知 / Component notices in distribution|
-|setuptools|84.1.0|构建 / Build|MIT|
+|setuptools|84.2.1|构建 / Build|MIT|
 |wheel|0.48.0|构建工具 / Build tooling|MIT|
 |packaging|26.3|wheel 的构建传递依赖 / Transitive build dependency of wheel|Apache-2.0 OR BSD-2-Clause|
-|Ruff|0.14.2|格式与静态检查 / Formatting and lint|MIT|
-|tomli|2.2.1|仅 Python 3.10 开发测试的 TOML 解析 / TOML parsing for development tests on Python 3.10 only|MIT|
+|Ruff|0.17.4|格式与静态检查 / Formatting and lint|MIT|
+|tomli|2.5.0|仅 Python 3.10 开发测试的 TOML 解析 / TOML parsing for development tests on Python 3.10 only|MIT|
 |PyYAML|6.0.3|开发测试的 CI 与更新配置解析 / CI and update-configuration parsing in development tests|MIT|
 |absl-py|2.5.1|原生状态测试支持 / Native-state test support|Apache-2.0|
 |JAX / jaxlib|0.9.0|原生数组与计算后端 / Native array and compute backend|Apache-2.0|
 |ml_dtypes|0.6.0|扩展数值类型 / Extended numeric dtypes|Apache-2.0|
 |opt_einsum|3.4.0|张量表达式优化 / Tensor-expression optimization|MIT|
-|Optax|0.2.7|优化器状态接口 / Optimizer-state interfaces|Apache-2.0|
+|Optax|0.2.8|优化器状态接口 / Optimizer-state interfaces|Apache-2.0|
 |SciPy|1.18.1|JAX 数值依赖 / JAX numerical dependency|BSD-3-Clause|
 |[actions/upload-artifact](https://github.com/actions/upload-artifact/releases/tag/v7.0.2)|v7.0.2|CI 验证资产 / CI verification artifacts|MIT|
 |[actions/setup-python](https://github.com/actions/setup-python/releases/tag/v7.1.0)|v7.1.0|CI Python 环境 / CI Python environment|MIT|

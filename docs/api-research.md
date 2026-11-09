@@ -33,12 +33,20 @@
 
 ```python
 from intelligence_dynamics.research import (
-    FixedPolicy, LearningRule, TabularPolicy, TaskConfig, run_episode,
+    FixedPolicy,
+    LearningRule,
+    TabularPolicy,
+    TaskConfig,
+    run_episode,
 )
 
 config = TaskConfig(
-    steps=24, cue_count=2, delay=1, switches=(8, 16),
-    mappings=((0, 1), (1, 0)), seed=7,
+    steps=24,
+    cue_count=2,
+    delay=1,
+    switches=(8, 16),
+    mappings=((0, 1), (1, 0)),
+    seed=7,
 )
 fixed = run_episode(config, FixedPolicy((0, 1)), seed=3)
 learner = TabularPolicy(LearningRule(priors=(0.0, 0.0)), mode="plastic")
@@ -141,8 +149,12 @@ bank = make_bank(partition="heldout", seed=12, pairs=1, steps=16, cue_count=2)
 rule = LearningRule(priors=(0.0, 0.0))
 for mode in MODES:
     result = evaluate(
-        rule, bank, mode=mode, seed=4,
-        corruption="isolated", corruption_rate=0.2,
+        rule,
+        bank,
+        mode=mode,
+        seed=4,
+        corruption="isolated",
+        corruption_rate=0.2,
     )
     print(mode, result.accuracy, result.update_fraction)
 ```
@@ -214,15 +226,26 @@ print(json.dumps(asdict(study.heldout), allow_nan=False))
 
 ```python
 from intelligence_dynamics.research import (
-    LearningRule, TaskConfig, compare_branches, verify_intervention, verify_paired_history,
+    LearningRule,
+    TaskConfig,
+    compare_branches,
+    verify_intervention,
+    verify_paired_history,
 )
 
 config = TaskConfig(
-    steps=12, cue_count=2, delay=1, switches=(6,),
-    mappings=((0, 1), (1, 0)), seed=4,
+    steps=12,
+    cue_count=2,
+    delay=1,
+    switches=(6,),
+    mappings=((0, 1), (1, 0)),
+    seed=4,
 )
 result = compare_branches(
-    config, LearningRule(priors=(0.0, 0.0)), boundary=6, seed=3,
+    config,
+    LearningRule(priors=(0.0, 0.0)),
+    boundary=6,
+    seed=3,
 )
 print(len(result.common_prefix), result.intervened_updates)
 before = {"memory": [1.0], "value": 0.5}
@@ -246,7 +269,10 @@ print(verify_paired_history(history, history, boundary=2))
 
 ```python
 from intelligence_dynamics.research import (
-    Series, aggregate_comparisons, common_support, compare_blocks,
+    Series,
+    aggregate_comparisons,
+    common_support,
+    compare_blocks,
 )
 
 states = (0, 0, 0, 0, 1, 1, 1, 1)
