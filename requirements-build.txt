@@ -1,4 +1,4 @@
 --index-url https://pypi.org/simple
-setuptools==84.1.0
+setuptools==84.2.1
 wheel==0.48.0
 packaging==26.3
