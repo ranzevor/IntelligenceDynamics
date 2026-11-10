@@ -1,6 +1,6 @@
 # Research questions and experimental design
 
-[中文](../research.md) · [Research API](api-research.md)
+[中文](../research.md) · [Research API](api-research.md) · [Research results](research-results.md) · [Carry-reset pilot](carry-study.md)
 
 ## 1. Scientific question
 

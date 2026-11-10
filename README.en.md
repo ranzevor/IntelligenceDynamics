@@ -74,6 +74,8 @@ For installation, verification, and removal of a locally built wheel, see [wheel
 |Installation, commands, and examples|[Software guide](docs/en/software.md)|
 |Record types, missing values, and metrics|[Data contract](docs/en/data.md)|
 |Scientific questions, hypotheses, and experimental design|[Research design](docs/en/research.md)|
+|Continued updates, state, and gating experiments|[Research results](docs/en/research-results.md)|
+|Native recurrent-state reset pilot|[Pilot design](docs/en/carry-study.md)|
 |Task, policy, search, and intervention APIs|[Research API](docs/en/api-research.md)|
 |Native models, checkpoint storage, and continuation|[Native model interfaces](docs/en/native.md)|
 |Local execution, queues, and cloud interfaces|[Execution management](docs/en/runtime.md)|

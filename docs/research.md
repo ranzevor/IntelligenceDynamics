@@ -1,6 +1,6 @@
 # 研究问题与实验设计
 
-[English](en/research.md) · [研究算法 API](api-research.md)
+[English](en/research.md) · [研究算法 API](api-research.md) · [研究结果](research-results.md) · [循环状态试点](carry-study.md)
 
 ## 1. 科学问题
 

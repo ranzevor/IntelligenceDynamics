@@ -1,0 +1,631 @@
+{
+  "commit": "9710f60fa30da5badc451ad7ce3ff296d5070830",
+  "lock_blob": "18b5340e7ce408d03ee518ac40419f4269c0a1c0",
+  "files": [
+    {
+      "path": "experiments/XN35/foragax/ForagaxSquareWaveTwoBiome-v11/9/DRQN.json",
+      "blob": "1e9c64ee444792fe8638b246758c74f7b0e8d74b",
+      "bytes": 1008
+    },
+    {
+      "path": "LICENSE",
+      "blob": "a47f4523505ae78a4db6e8c300e8b05371e6c332",
+      "bytes": 1073
+    },
+    {
+      "path": "pyproject.toml",
+      "blob": "49c758b1e8fd09d64d2c557e12aa8ad06fb98e8d",
+      "bytes": 1927
+    },
+    {
+      "path": "README.md",
+      "blob": "9ddf238e557d3c91df500036e5a7b9a0376b7e31",
+      "bytes": 14707
+    },
+    {
+      "path": "src/algorithms/__init__.py",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0
+    },
+    {
+      "path": "src/algorithms/BaseAgent.py",
+      "blob": "45639ea01f5ef7ab0724f9d93983c1dd2bc45779",
+      "bytes": 1400
+    },
+    {
+      "path": "src/algorithms/DebugAgent.py",
+      "blob": "18d224966332822d3819c1d04a19bd2bc34ecd69",
+      "bytes": 1863
+    },
+    {
+      "path": "src/algorithms/MCTSAgent.py",
+      "blob": "393d809061f96873c4e9ade69c704d7093811c63",
+      "bytes": 9346
+    },
+    {
+      "path": "src/algorithms/nn/AADRQN.py",
+      "blob": "d4c94b544ca71053099f00bd202ef330711cf2f8",
+      "bytes": 13240
+    },
+    {
+      "path": "src/algorithms/nn/ACConv.py",
+      "blob": "6224741dc1043f5fd27553c6f692d195ba8a0253",
+      "bytes": 6279
+    },
+    {
+      "path": "src/algorithms/nn/ACMLP.py",
+      "blob": "444488c42bc7b49513e70eea1abdf737961761ff",
+      "bytes": 5651
+    },
+    {
+      "path": "src/algorithms/nn/activations.py",
+      "blob": "9367ba13f4dfcec2f0734231fb0e1cae6530b12a",
+      "bytes": 270
+    },
+    {
+      "path": "src/algorithms/nn/ATAADRQN.py",
+      "blob": "82c48c399b86df48d38c312342159a8c7bbbc490",
+      "bytes": 14931
+    },
+    {
+      "path": "src/algorithms/nn/DQN_Hare_and_Tortoise.py",
+      "blob": "42a940f30577055327b0eac610d9c8355391fbf5",
+      "bytes": 1801
+    },
+    {
+      "path": "src/algorithms/nn/DQN_L2_Init.py",
+      "blob": "5cd0fd8c82ce3b867150039794784a3026a5be14",
+      "bytes": 2478
+    },
+    {
+      "path": "src/algorithms/nn/DQN_L2.py",
+      "blob": "2fef6db729c1735167cf84e6223b4a4ed3ecc685",
+      "bytes": 2321
+    },
+    {
+      "path": "src/algorithms/nn/DQN_ReDo.py",
+      "blob": "b36c2f44f7e3cf6a9d377b31dd9e494c5881f63e",
+      "bytes": 13535
+    },
+    {
+      "path": "src/algorithms/nn/DQN_Reset.py",
+      "blob": "22378dd33c35679062275a0e300b0dcf8f9c7c3a",
+      "bytes": 3198
+    },
+    {
+      "path": "src/algorithms/nn/DQN_Shrink_and_Perturb.py",
+      "blob": "86ce4104759dc70141a3912e0c84cc23a37137ce",
+      "bytes": 2082
+    },
+    {
+      "path": "src/algorithms/nn/DQN_Spectral_Reg.py",
+      "blob": "99e85666a41015030e836d8e608f6e0d2ecf22ed",
+      "bytes": 4196
+    },
+    {
+      "path": "src/algorithms/nn/DQN.py",
+      "blob": "e26ee59f1aede94e08118cb2ea98c7d18a1a8866",
+      "bytes": 4867
+    },
+    {
+      "path": "src/algorithms/nn/DRQN.py",
+      "blob": "0af9bf72b8cf34817990efaf7834006108959284",
+      "bytes": 16203
+    },
+    {
+      "path": "src/algorithms/nn/EQRC.py",
+      "blob": "79b35d8d0bf05ea9706d19e06dba76f83a54f7cf",
+      "bytes": 6582
+    },
+    {
+      "path": "src/algorithms/nn/ESMAC.py",
+      "blob": "a55065064f3c627c13f54240e4bf2006a966caa7",
+      "bytes": 4924
+    },
+    {
+      "path": "src/algorithms/nn/MADRQN.py",
+      "blob": "457714eea0e37fb6d105c1544e1b4f5f9aa909c6",
+      "bytes": 12594
+    },
+    {
+      "path": "src/algorithms/nn/NNAgent.py",
+      "blob": "528eb3389b4c84659ec1ba04e1340ec683563a3b",
+      "bytes": 22584
+    },
+    {
+      "path": "src/algorithms/nn/PT_DQN.py",
+      "blob": "08ca3c19e5aef03b0292723c82e96855cbfa84c3",
+      "bytes": 19240
+    },
+    {
+      "path": "src/algorithms/nn/RealTimeACConv.py",
+      "blob": "1140f009d8b1a2e420bc7d5d71e443b2e27fe91c",
+      "bytes": 8507
+    },
+    {
+      "path": "src/algorithms/nn/RealTimeACConvHint.py",
+      "blob": "92e23494f93a7bdf67a35c18d6982734525c7171",
+      "bytes": 10582
+    },
+    {
+      "path": "src/algorithms/nn/RealTimeACConvHintRTU.py",
+      "blob": "bb4569d2cbbc1597a6c98f2a3c477500c1e07cd1",
+      "bytes": 8884
+    },
+    {
+      "path": "src/algorithms/nn/RealTimeACConvPooling.py",
+      "blob": "de86153647efa5f6ad28077096a729a41a8fdbe8",
+      "bytes": 5728
+    },
+    {
+      "path": "src/algorithms/nn/RealTimeACMLP.py",
+      "blob": "b5bd53e0178a4108cc36af231cab23439c38451f",
+      "bytes": 8544
+    },
+    {
+      "path": "src/algorithms/nn/RealTimeACMLPMulti.py",
+      "blob": "349de8ee1fe2ad5f333400aba0015836a3de6bc2",
+      "bytes": 8546
+    },
+    {
+      "path": "src/algorithms/nn/rtus/exp_linear_rtus.py",
+      "blob": "0e2fc4d2525c98e22a4d89fde30c93063941d24a",
+      "bytes": 8308
+    },
+    {
+      "path": "src/algorithms/nn/rtus/linear_rtus.py",
+      "blob": "8a125ad536a0c029a0e20bfc74d85826b0b88c53",
+      "bytes": 9609
+    },
+    {
+      "path": "src/algorithms/nn/rtus/non_linear_rtus.py",
+      "blob": "be84cd82caaf6f7bf7b5768b08b8c66df1873461",
+      "bytes": 10318
+    },
+    {
+      "path": "src/algorithms/nn/rtus/rtus_utils.py",
+      "blob": "fe44597cc77f161919685df7972340fc05cc23f9",
+      "bytes": 6814
+    },
+    {
+      "path": "src/algorithms/nn/rtus/rtus.py",
+      "blob": "8525cd2a7b7f903ad5b8c0ffd5447adc43bd9ccf",
+      "bytes": 6995
+    },
+    {
+      "path": "src/algorithms/PPORegistry.py",
+      "blob": "712e7e87bba18d0cda1a2dc90bfe097963054f65",
+      "bytes": 2195
+    },
+    {
+      "path": "src/algorithms/RandomAgent.py",
+      "blob": "cfa4d928971a09d90ad5fccf0c4e71aad30482a0",
+      "bytes": 1898
+    },
+    {
+      "path": "src/algorithms/registry.py",
+      "blob": "447d1fb26cea55a704d4cfe89c2f994d553e650a",
+      "bytes": 2319
+    },
+    {
+      "path": "src/algorithms/SearchAgent.py",
+      "blob": "17542c71e56c5eea8e5928c9463b5a22dd376305",
+      "bytes": 15544
+    },
+    {
+      "path": "src/algorithms/tc/ESARSA.py",
+      "blob": "f6378f24241f36e28216c609b68fff483fc36024",
+      "bytes": 1704
+    },
+    {
+      "path": "src/algorithms/tc/SoftmaxAC.py",
+      "blob": "de9053cd01f0c85dd449947d9d4338d922538d45",
+      "bytes": 1816
+    },
+    {
+      "path": "src/algorithms/tc/TCAgent.py",
+      "blob": "f5876d334cbccac45b906ea8cd00212bd4b2402d",
+      "bytes": 2976
+    },
+    {
+      "path": "src/analysis/__init__.py",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0
+    },
+    {
+      "path": "src/analysis/colors.py",
+      "blob": "1ab488f9ab30f9df1b8e24b68bfa6cc993e0967a",
+      "bytes": 2635
+    },
+    {
+      "path": "src/analysis/results.py",
+      "blob": "6295c2af3e26e7ffd7d8348dcdcf33b3dc73634e",
+      "bytes": 298
+    },
+    {
+      "path": "src/annotate_plot.py",
+      "blob": "001686a0916b20674bcde1e0c4be770db46d93bb",
+      "bytes": 20105
+    },
+    {
+      "path": "src/biome_curve.py",
+      "blob": "acca868c134a6d61df7bc03eec79dc43c437813c",
+      "bytes": 5297
+    },
+    {
+      "path": "src/biome_scatter.py",
+      "blob": "4b8b49efacd475fa563eb653b082613888426d33",
+      "bytes": 10965
+    },
+    {
+      "path": "src/biome_stacked_bar.py",
+      "blob": "97fc12e15921c8496185ae60df1405464aa1d25d",
+      "bytes": 10655
+    },
+    {
+      "path": "src/biome_ternary.py",
+      "blob": "e0216d5a87c645eccdfc6a7577787178c1e9f4e9",
+      "bytes": 3627
+    },
+    {
+      "path": "src/continuing_main.py",
+      "blob": "971e28b010795bb3138782a2265cd1a4ed64f6d0",
+      "bytes": 32190
+    },
+    {
+      "path": "src/dataset_stat.py",
+      "blob": "b730bd683e2df0fdd9e29e2d5f0d927d47fe6bf5",
+      "bytes": 1606
+    },
+    {
+      "path": "src/environments/__init__.py",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0
+    },
+    {
+      "path": "src/environments/Atari.py",
+      "blob": "02b97124229f64addccc4e2baffa0bf3cdb3fdb7",
+      "bytes": 5762
+    },
+    {
+      "path": "src/environments/Debug.py",
+      "blob": "1b84da9cd7494bcc81b8819e0a2b2e6cae6b40e5",
+      "bytes": 1398
+    },
+    {
+      "path": "src/environments/DirectionalTMaze.py",
+      "blob": "1be3fbdf210657130d38bd948ee6edb26fc087f7",
+      "bytes": 9813
+    },
+    {
+      "path": "src/environments/Foragax.py",
+      "blob": "c683d1b0e12fef8c3e763ef5e2375a2260a20cd3",
+      "bytes": 1387
+    },
+    {
+      "path": "src/environments/Forager.py",
+      "blob": "e859a07dd7e34870a801981d532e4d58437cb47b",
+      "bytes": 1009
+    },
+    {
+      "path": "src/environments/Gym.py",
+      "blob": "bc2682d22a5d176aaedd888bfb50ce75a7f37137",
+      "bytes": 569
+    },
+    {
+      "path": "src/environments/MCTSEnvWrapper.py",
+      "blob": "6dbb5da4e2c3aeb6a35860b80bf6852a9e60b667",
+      "bytes": 1292
+    },
+    {
+      "path": "src/environments/Minatar.py",
+      "blob": "b708754a14b35f0e78667ea93f017c3ce9c0ac30",
+      "bytes": 454
+    },
+    {
+      "path": "src/environments/PyRlEnvWrapper.py",
+      "blob": "436da4bdb0749f830c3675e50c1632b6390d508c",
+      "bytes": 557
+    },
+    {
+      "path": "src/environments/TMaze.py",
+      "blob": "4900e26c27811cd3acf19522dc2af59cc85e8434",
+      "bytes": 7539
+    },
+    {
+      "path": "src/experiment/__init__.py",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0
+    },
+    {
+      "path": "src/experiment/data.py",
+      "blob": "bca65827079f0744411d17e95f3d93183cff1a44",
+      "bytes": 450
+    },
+    {
+      "path": "src/experiment/ExperimentModel.py",
+      "blob": "cacaa1508ef7d96ba4f434c9b8a4577f66ab7a02",
+      "bytes": 570
+    },
+    {
+      "path": "src/experiment/hypers.py",
+      "blob": "288ee9ebdcbaebb48892c9eef3b4b64121674bb3",
+      "bytes": 7514
+    },
+    {
+      "path": "src/experiment/OptunaExperiment.py",
+      "blob": "9c67ba426110212f47adc153151e8bf348ef1f22",
+      "bytes": 3697
+    },
+    {
+      "path": "src/experiment/tools.py",
+      "blob": "2ab2bbeba666f6b9aa757b64bf32e9f1cc5a23ed",
+      "bytes": 1081
+    },
+    {
+      "path": "src/grad_norm_curve.py",
+      "blob": "96174a973f3a2da40f7f953e4eacfe52177f25aa",
+      "bytes": 7240
+    },
+    {
+      "path": "src/grouped_biome_bar.py",
+      "blob": "4f87f58349ccb9033c7ea838d984387fb4c86955",
+      "bytes": 3200
+    },
+    {
+      "path": "src/learning_bar.py",
+      "blob": "ab5b1a3182f377d459e6e46bf43b195c5f3e05f8",
+      "bytes": 5203
+    },
+    {
+      "path": "src/learning_curve.py",
+      "blob": "fa5bff77adb8bac75f80cffc033df56a7652bb7c",
+      "bytes": 44332
+    },
+    {
+      "path": "src/main.py",
+      "blob": "4045dc794714a6285ecd0f143235e00712ac68b5",
+      "bytes": 4710
+    },
+    {
+      "path": "src/mushroom_curve.py",
+      "blob": "c5138bce3054911cf0fd50148a8d5f82f4c6cb0f",
+      "bytes": 3232
+    },
+    {
+      "path": "src/optimizers.py",
+      "blob": "2476a398a63d3f02da08186c867334067624c575",
+      "bytes": 11269
+    },
+    {
+      "path": "src/plasticity_compare.py",
+      "blob": "b9d861db324ad9b48a8ff3a39f99b819b1539861",
+      "bytes": 25035
+    },
+    {
+      "path": "src/plotting_utils.py",
+      "blob": "073441ea035180a0d35607df9be917e8ed6da6a3",
+      "bytes": 15154
+    },
+    {
+      "path": "src/problems/__init__.py",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0
+    },
+    {
+      "path": "src/problems/Acrobot.py",
+      "blob": "d4eafac74c5ed5b47bb1b0d1a2765eda44bc0ed4",
+      "bytes": 774
+    },
+    {
+      "path": "src/problems/Atari.py",
+      "blob": "3cbcb376b0912456963f7d9854db7ab6ca027755",
+      "bytes": 845
+    },
+    {
+      "path": "src/problems/BaseProblem.py",
+      "blob": "beac9049c643e378cf22272fbfb8d76b19e14ab8",
+      "bytes": 1548
+    },
+    {
+      "path": "src/problems/Cartpole.py",
+      "blob": "171a33a0c84519fa7dc9533bca6e8d1cb4a4b565",
+      "bytes": 858
+    },
+    {
+      "path": "src/problems/Debug.py",
+      "blob": "db69c90d02109f09afca81a18a8132bb0f1e84e5",
+      "bytes": 501
+    },
+    {
+      "path": "src/problems/DirectionalTMaze.py",
+      "blob": "c2c862d6cc5c652465eadfca945e1afe86b4b131",
+      "bytes": 591
+    },
+    {
+      "path": "src/problems/Foragax.py",
+      "blob": "a802367ef052264f9db2402996a88e49a5afa400",
+      "bytes": 1069
+    },
+    {
+      "path": "src/problems/Forager.py",
+      "blob": "5f85e6adeff234522bea3661ec6a6104dbb555b0",
+      "bytes": 771
+    },
+    {
+      "path": "src/problems/Minatar.py",
+      "blob": "0ac95092c8b4282108195cf14865d3ed9a07c634",
+      "bytes": 840
+    },
+    {
+      "path": "src/problems/MountainCar.py",
+      "blob": "69a3240f807e29b4c1003af235786f5045eb8aa6",
+      "bytes": 792
+    },
+    {
+      "path": "src/problems/registry.py",
+      "blob": "0ecaec8d83c99f427ff1ee1088473165223b410c",
+      "bytes": 348
+    },
+    {
+      "path": "src/problems/TMaze.py",
+      "blob": "dbff388967b2d2cd572e7dc4be4cf009970af698",
+      "bytes": 668
+    },
+    {
+      "path": "src/process_data.py",
+      "blob": "a8ff5c61d9c11e81d8b78b865003a32fc138e782",
+      "bytes": 4565
+    },
+    {
+      "path": "src/representations/__init__.py",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0
+    },
+    {
+      "path": "src/representations/networks.py",
+      "blob": "dd78c26a89d30e98681e86092deea15477ff704f",
+      "bytes": 68312
+    },
+    {
+      "path": "src/representations/TileCoder.py",
+      "blob": "ef4009337dcd2ea46262fc0f25794973f736d7e6",
+      "bytes": 298
+    },
+    {
+      "path": "src/rtu_ppo.py",
+      "blob": "63bdc359079ef14b0de1e5964ed49b02c62b3e59",
+      "bytes": 89937
+    },
+    {
+      "path": "src/utils/__init__.py",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0
+    },
+    {
+      "path": "src/utils/checkpoint.py",
+      "blob": "1ab7f78ad1273c2ac23b35759750dbda46c8c043",
+      "bytes": 4269
+    },
+    {
+      "path": "src/utils/chex.py",
+      "blob": "897eb2e06c9f31b4c748bd969459c88f6e4ff4c8",
+      "bytes": 329
+    },
+    {
+      "path": "src/utils/constants.py",
+      "blob": "3a78f7c1baeab6ff9edcd2d2151fe660b7b635f5",
+      "bytes": 2112
+    },
+    {
+      "path": "src/utils/dqn_metrics.py",
+      "blob": "d4f916020e6ffc0de67ea455fd9edd1170d1e744",
+      "bytes": 6507
+    },
+    {
+      "path": "src/utils/fp.py",
+      "blob": "be50fc23b731738bb93932b0c879ccac1e56bc06",
+      "bytes": 217
+    },
+    {
+      "path": "src/utils/hk.py",
+      "blob": "13e070c2454b5e5f08aa8b71d262af76c2cb44a1",
+      "bytes": 2402
+    },
+    {
+      "path": "src/utils/iterators.py",
+      "blob": "63e59271dc916de780f3d6cc0b9ebd213ab41223",
+      "bytes": 315
+    },
+    {
+      "path": "src/utils/jax_compat.py",
+      "blob": "77c4f34d58cf4ec0111d64be1ea0afe83f42ffe4",
+      "bytes": 1162
+    },
+    {
+      "path": "src/utils/jax.py",
+      "blob": "2aefdafed74a7a7373b6cbea774c23cfb2abe297",
+      "bytes": 1419
+    },
+    {
+      "path": "src/utils/metrics.py",
+      "blob": "9a84b7c6b8897e00dde66764af3b6f4aba0c461c",
+      "bytes": 8219
+    },
+    {
+      "path": "src/utils/ml_instrumentation/_utils/sqlite.py",
+      "blob": "ea24495d9c957ad9029ac1ddd074c44648e4df92",
+      "bytes": 155
+    },
+    {
+      "path": "src/utils/ml_instrumentation/reader.py",
+      "blob": "f2134ad9d485f4b76dda64ecc60d796abd0289ac",
+      "bytes": 892
+    },
+    {
+      "path": "src/utils/ml_instrumentation/Sampler.py",
+      "blob": "e5719427339bf726beba96dc9accab04d5819428",
+      "bytes": 417
+    },
+    {
+      "path": "src/utils/ml_instrumentation/utils.py",
+      "blob": "ade6a83b13639f3fa2a692341fb113ed8cb3f102",
+      "bytes": 484
+    },
+    {
+      "path": "src/utils/plotting.py",
+      "blob": "1691b34d47f8a4e073157ecff1e540111022c303",
+      "bytes": 16540
+    },
+    {
+      "path": "src/utils/policies.py",
+      "blob": "d85059b6e2e11327d1048c2c6a33953afa90c232",
+      "bytes": 1428
+    },
+    {
+      "path": "src/utils/ppo_metrics.py",
+      "blob": "5f236b975b796b0a37a9c95e5adc28df39f8150d",
+      "bytes": 20165
+    },
+    {
+      "path": "src/utils/preempt.py",
+      "blob": "6d4dd2390793beb9275dccabe5f757c673a02373",
+      "bytes": 908
+    },
+    {
+      "path": "src/utils/queue.py",
+      "blob": "3cbf1e74ab2147b30ef62e3c5283c53de0041013",
+      "bytes": 1804
+    },
+    {
+      "path": "src/utils/results.py",
+      "blob": "0b4e5415c3f635422b5eddefc9ef32135dc9a3a0",
+      "bytes": 12817
+    },
+    {
+      "path": "src/utils/rlglue/__init__.py",
+      "blob": "67af5c01bcc5d34aaf892e2d668cd81310aac05b",
+      "bytes": 218
+    },
+    {
+      "path": "src/utils/rlglue/agent.py",
+      "blob": "a589f9d5fc2c6f7504485f0fbac0d45f4f4455fc",
+      "bytes": 1344
+    },
+    {
+      "path": "src/utils/rlglue/environment.py",
+      "blob": "9befda6da358115279f7976897ab6bf8a5b8f7b2",
+      "bytes": 947
+    },
+    {
+      "path": "src/utils/rlglue/rl_glue.py",
+      "blob": "8cf1a0c40b02730d2cbc4c245428cd3a0321970b",
+      "bytes": 4069
+    },
+    {
+      "path": "uv.lock",
+      "blob": "18b5340e7ce408d03ee518ac40419f4269c0a1c0",
+      "bytes": 291037
+    }
+  ]
+}
