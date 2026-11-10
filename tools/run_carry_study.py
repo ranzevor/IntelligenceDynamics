@@ -104,6 +104,7 @@ def read_config(path):
 
 
 def verify_upstream(upstream, manifest_path, config):
+    upstream = safe_path(upstream)
     manifest = loads(Path(manifest_path).read_bytes())
     if (
         manifest["commit"] != config["upstream_commit"]

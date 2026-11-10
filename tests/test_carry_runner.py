@@ -10,6 +10,7 @@ from types import ModuleType
 from unittest.mock import patch
 
 from intelligence_dynamics.native import ExecutionState
+from tests.support import create_junction, create_symlink
 from tools.run_carry_study import (
     latest_stage,
     load_stage,
@@ -92,31 +93,6 @@ class CarryConfigurationTests(unittest.TestCase):
                     with self.assertRaises(ValueError):
                         read_config(target)
 
-    def test_pinned_input_content_and_unregistered_python(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            (root / "src").mkdir()
-            files = {"src/entry.py": b"VALUE = 1\n", "config.json": b"{}", "uv.lock": b"lock"}
-            rows = []
-            for name, data in files.items():
-                (root / name).write_bytes(data)
-                blob = hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
-                rows.append({"path": name, "bytes": len(data), "blob": blob})
-            lock = rows[-1]["blob"]
-            manifest = root / "manifest.json"
-            manifest.write_text(
-                json.dumps({"commit": "a" * 40, "lock_blob": lock, "files": rows}), encoding="utf-8"
-            )
-            config = {"upstream_commit": "a" * 40, "lock_blob": lock, "experiment": "config.json"}
-            self.assertEqual(set(verify_upstream(root, manifest, config)), set(files))
-            (root / "src/extra.py").write_text("VALUE = 2\n", encoding="utf-8")
-            with self.assertRaisesRegex(ValueError, "unregistered"):
-                verify_upstream(root, manifest, config)
-            (root / "src/extra.py").unlink()
-            (root / "src/entry.py").write_text("VALUE = 3\n", encoding="utf-8")
-            with self.assertRaisesRegex(ValueError, "differs"):
-                verify_upstream(root, manifest, config)
-
     def test_safe_path_preserves_a_regular_directory(self):
         with tempfile.TemporaryDirectory() as directory:
             self.assertEqual(safe_path(directory), Path(directory).resolve())
@@ -145,6 +121,97 @@ class CarryConfigurationTests(unittest.TestCase):
             )
             self.assertEqual(released.returncode, 0, released.stderr)
             self.assertEqual(released.stdout.strip(), "acquired")
+
+
+class CarryUpstreamTests(unittest.TestCase):
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory(prefix="carry-upstream-")
+        self.addCleanup(directory.cleanup)
+        self.root = Path(directory.name)
+        (self.root / "src").mkdir()
+        self.files = {"src/entry.py": b"VALUE = 1\n", "config.json": b"{}", "uv.lock": b"lock"}
+        self.rows = []
+        for name, data in self.files.items():
+            (self.root / name).write_bytes(data)
+            blob = hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
+            self.rows.append({"path": name, "bytes": len(data), "blob": blob})
+        self.config = {
+            "upstream_commit": "a" * 40,
+            "lock_blob": self.rows[-1]["blob"],
+            "experiment": "config.json",
+        }
+        self.manifest = self.root / "manifest.json"
+        self.manifest.write_text(
+            json.dumps(
+                {"commit": "a" * 40, "lock_blob": self.config["lock_blob"], "files": self.rows}
+            ),
+            encoding="utf-8",
+        )
+
+    def test_pinned_input_content_and_unregistered_python(self):
+        for root in (self.root, self.root / "src" / ".."):
+            with self.subTest(root=root):
+                self.assertEqual(
+                    set(verify_upstream(root, self.manifest, self.config)), set(self.files)
+                )
+                extra = self.root / "src/extra.py"
+                extra.write_text("VALUE = 2\n", encoding="utf-8")
+                with self.assertRaisesRegex(ValueError, "unregistered"):
+                    verify_upstream(root, self.manifest, self.config)
+                extra.unlink()
+                (self.root / "src/entry.py").write_text("VALUE = 3\n", encoding="utf-8")
+                with self.assertRaisesRegex(ValueError, "differs"):
+                    verify_upstream(root, self.manifest, self.config)
+                (self.root / "src/entry.py").write_bytes(self.files["src/entry.py"])
+
+    @unittest.skipUnless(os.name == "nt", "Windows short paths")
+    def test_windows_short_root_resolves_to_registered_files(self):
+        import ctypes
+
+        get_short_path = ctypes.WinDLL("kernel32", use_last_error=True).GetShortPathNameW
+        get_short_path.argtypes = [ctypes.c_wchar_p, ctypes.c_wchar_p, ctypes.c_uint]
+        get_short_path.restype = ctypes.c_uint
+        size = get_short_path(str(self.root), None, 0)
+        if not size:
+            raise ctypes.WinError(ctypes.get_last_error())
+        buffer = ctypes.create_unicode_buffer(size)
+        if not get_short_path(str(self.root), buffer, size):
+            raise ctypes.WinError(ctypes.get_last_error())
+        root = Path(buffer.value)
+        if root == self.root.resolve():
+            self.skipTest("filesystem does not provide a distinct short path")
+        self.assertEqual(set(verify_upstream(root, self.manifest, self.config)), set(self.files))
+
+    def test_invalid_and_duplicate_manifest_paths_are_rejected(self):
+        paths = ("../entry.py", "/entry.py", "src\\entry.py", "src/entry.py")
+        root = self.root / "src" / ".."
+        for path in paths:
+            with self.subTest(path=path):
+                message = (
+                    "escaping or duplicate path" if path == "src/entry.py" else "an invalid path"
+                )
+                rows = [*self.rows, {**self.rows[0], "path": path}]
+                self.manifest.write_text(
+                    json.dumps(
+                        {"commit": "a" * 40, "lock_blob": self.config["lock_blob"], "files": rows}
+                    ),
+                    encoding="utf-8",
+                )
+                with self.assertRaisesRegex(ValueError, message):
+                    verify_upstream(root, self.manifest, self.config)
+
+    def test_linked_root_is_rejected(self):
+        alias = self.root / "linked-root"
+        create_symlink(self, alias, self.root, directory=True)
+        with self.assertRaisesRegex(ValueError, "links or reparse points"):
+            verify_upstream(alias, self.manifest, self.config)
+
+    @unittest.skipUnless(os.name == "nt", "Windows directory junctions")
+    def test_junction_root_is_rejected(self):
+        alias = self.root / "junction-root"
+        create_junction(alias, self.root)
+        with self.assertRaisesRegex(ValueError, "links or reparse points"):
+            verify_upstream(alias, self.manifest, self.config)
 
 
 @unittest.skipIf(np is None, "requires NumPy arrays")
