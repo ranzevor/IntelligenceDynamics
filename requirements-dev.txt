@@ -1,5 +1,5 @@
 -r requirements-build.txt
 -r requirements-arrays.txt
 -r requirements-lint.txt
-tomli==2.2.1; python_version < "3.11"
+tomli==2.5.0; python_version < "3.11"
 pyyaml==6.0.3
