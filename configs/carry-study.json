@@ -1,0 +1,15 @@
+{
+  "upstream_commit": "9710f60fa30da5badc451ad7ce3ff296d5070830",
+  "lock_blob": "18b5340e7ce408d03ee518ac40419f4269c0a1c0",
+  "foragax_version": "0.55.0",
+  "experiment": "experiments/XN35/foragax/ForagaxSquareWaveTwoBiome-v11/9/DRQN.json",
+  "indices": [
+    23,
+    24
+  ],
+  "boundary": 150000,
+  "endpoint": 300000,
+  "chunk_size": 5000,
+  "checkpoint_max_bytes": 671088640,
+  "checkpoint_interval": 50000
+}

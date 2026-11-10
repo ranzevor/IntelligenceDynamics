@@ -44,6 +44,22 @@ python -B -m unittest tests.test_native_state_codec_types -v
 
 依赖更新使用官方 PyPI 索引上的精确版本，同步修改构建声明与对应依赖清单，再测试核心无 NumPy 安装与完整开发安装。不要提交虚拟环境、缓存、构建物、数据集或凭据。
 
+## 原生循环状态试点
+
+运行器使用 Linux、Python 3.12 和 JAX CPU 后端。使用上游锁定环境安装依赖，模型配置与源码版本由 `configs/carry-study.json` 和 `configs/carry-upstream.json` 指定。
+
+```bash
+git clone https://github.com/steventango/continual-foragax-agents.git ../continual-foragax-agents
+git -C ../continual-foragax-agents checkout --detach 9710f60fa30da5badc451ad7ce3ff296d5070830
+uv sync --project ../continual-foragax-agents --python 3.12 --frozen --no-dev
+../continual-foragax-agents/.venv/bin/python -B tools/run_carry_study.py \
+  --upstream ../continual-foragax-agents --output ../carry-output
+```
+
+输出目录必须位于项目和上游源码目录之外，新运行要求该目录尚不存在。程序每 50,000 次交互保存一个阶段，并在分支边界和终点保存。每个阶段包含完整状态、五条类型化轨迹和阶段记录；检查点使用 pickle 协议 5 与 zlib 压缩。续跑读取本运行产生的检查点，pickle 解码会构造 Python 对象。
+
+中断后使用相同源码、配置、依赖环境、JAX 64 位模式和输出路径，给原命令增加 `--resume`。程序从最近的完整阶段继续，保留先前阶段，并拒绝并发写入同一输出目录。结果保存在各索引的 `summary.json` 和输出根目录的 `summary.json`。科学设计见[循环状态试点](docs/carry-study.md)。
+
 ## CI 与依赖更新
 
 CI 在 PR、`main` 推送及手动触发时运行，覆盖 Windows/Linux 的 Python 3.10、3.12；3.12 安装原生测试依赖。每种组合运行普通、`-O`、`-OO` 回归、源码边界与格式检查，另在隔离环境验证 wheel 的安装、核心命令、卸载和重装。配置检查入口是 `python -B tools/check_maintenance.py`。
@@ -95,6 +111,22 @@ Use the [issue forms](https://github.com/ranzevor/IntelligenceDynamics/issues/ne
 Send external contributions from a topic branch in a fork to `main`. Explain the problem, change, compatibility impact, and actual validation in the PR. Discuss reproducible behavior and concrete evidence. [Ranzevor](https://github.com/ranzevor) maintains the repository.
 
 Before merging each PR, a reviewer who did not implement the change examines the current candidate and binds the conclusion to its commit or content tree in a PR Review. After further pushes, review the changes and their effects. Merge after blocking findings are closed and current CI, technical review, and maintainer approval are complete. For a single-maintainer repository, the maintainer makes the final merge decision based on the independent technical review.
+
+## Native recurrent-state pilot
+
+The runner uses Linux, Python 3.12 and the JAX CPU backend. Install dependencies from the upstream lock. `configs/carry-study.json` and `configs/carry-upstream.json` identify the model configuration and upstream source revision.
+
+```bash
+git clone https://github.com/steventango/continual-foragax-agents.git ../continual-foragax-agents
+git -C ../continual-foragax-agents checkout --detach 9710f60fa30da5badc451ad7ce3ff296d5070830
+uv sync --project ../continual-foragax-agents --python 3.12 --frozen --no-dev
+../continual-foragax-agents/.venv/bin/python -B tools/run_carry_study.py \
+  --upstream ../continual-foragax-agents --output ../carry-output
+```
+
+The output directory must be outside the project and upstream source directories and must not exist for a new run. The runner saves a stage every 50,000 interactions, at the branch boundary and at each endpoint. Each stage contains the complete state, five typed traces and a stage record. Checkpoints use pickle protocol 5 and zlib compression. Resume reads checkpoints produced by this run. Pickle decoding constructs Python objects.
+
+After interruption, add `--resume` to the same command with unchanged source, configuration, dependencies, JAX 64-bit mode and output path. Execution continues from the latest complete stage, preserves earlier stages and rejects concurrent writers to the output directory. Per-index and root-level `summary.json` files contain the results. See the [recurrent-state pilot design](docs/en/carry-study.md).
 
 ## CI and dependency updates
 
