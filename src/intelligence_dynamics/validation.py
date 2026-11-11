@@ -32,6 +32,7 @@ assets/README.md
 assets/brand.png
 assets/cover.png
 configs/batch-job.json
+configs/carry-confirmation.json
 configs/carry-study.json
 configs/carry-upstream.json
 configs/cue-study.json
@@ -40,9 +41,11 @@ configs/forager-conversion.json
 configs/local-command.json
 configs/measurement-record.schema.json
 docs/api-research.md
+docs/carry-confirmation.md
 docs/carry-study.md
 docs/data.md
 docs/en/api-research.md
+docs/en/carry-confirmation.md
 docs/en/carry-study.md
 docs/en/data.md
 docs/en/native.md
@@ -85,6 +88,7 @@ src/intelligence_dynamics/research/__init__.py
 src/intelligence_dynamics/research/_validation.py
 src/intelligence_dynamics/research/causal.py
 src/intelligence_dynamics/research/carry.py
+src/intelligence_dynamics/research/confirmation.py
 src/intelligence_dynamics/research/criteria.py
 src/intelligence_dynamics/research/evaluation.py
 src/intelligence_dynamics/research/evolution.py
@@ -106,6 +110,8 @@ tests/__init__.py
 tests/support.py
 tests/test_cli_service.py
 tests/test_carry_runner.py
+tests/test_carry_confirmation.py
+tests/test_carry_campaign.py
 tests/test_experiments_arrays.py
 tests/test_maintenance.py
 tests/test_metrics_adapters.py
@@ -132,6 +138,7 @@ tests/test_windows_memory_contract.py
 tools/build_release.py
 tools/check_maintenance.py
 tools/prepare_source.py
+tools/run_carry_confirmation.py
 tools/run_carry_study.py
 tools/smoke_wheel.py
 """.split()
