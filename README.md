@@ -76,6 +76,7 @@ intelligence-dynamics study configs/cue-study.json study.json
 |科学问题、假设与实验设计|[研究设计](docs/research.md)|
 |持续更新、状态与门控实验结果|[研究结果](docs/research-results.md)|
 |原生循环状态重置试点|[试点设计](docs/carry-study.md)|
+|八轨迹循环状态确认实验|[确认设计](docs/carry-confirmation.md)|
 |任务、策略、搜索与干预 API|[研究 API](docs/api-research.md)|
 |原生模型、状态保存与续跑|[原生模型接口](docs/native.md)|
 |本地运行、队列与云接口|[运行管理](docs/runtime.md)|

@@ -60,6 +60,19 @@ uv sync --project ../continual-foragax-agents --python 3.12 --frozen --no-dev
 
 中断后使用相同源码、配置、依赖环境、JAX 64 位模式和输出路径，给原命令增加 `--resume`。程序从最近的完整阶段继续，保留先前阶段，并拒绝并发写入同一输出目录。结果保存在各索引的 `summary.json` 和输出根目录的 `summary.json`。科学设计见[循环状态试点](docs/carry-study.md)。
 
+## 循环状态确认实验
+
+沿用上节的 Linux 原生依赖环境，上游版本和实验配置由 `configs/carry-confirmation.json` 指定。准备至少 50 GiB 可用空间后运行
+
+```bash
+../continual-foragax-agents/.venv/bin/python -B tools/run_carry_confirmation.py \
+  --upstream ../continual-foragax-agents --output ../carry-confirmation
+```
+
+调度器按配置顺序执行种子，每个工作进程保存一个完整检查点后结束，下一个进程从该检查点继续。进程限制在八个可用逻辑 CPU 内。工作进程的退出码 10 表示检查点已保存，调度器核对阶段进展后继续；调度器返回 0 表示全部配置索引和统计汇总已完成。
+
+使用相同源码、配置、依赖和输出路径增加 `--resume` 可继续中断的实验。`execution/` 保存各工作进程的命令、原始日志、退出码和资源记录，根 `summary.json` 保存八轨迹统计与配对结果。分析直接读取最终轨迹并核对检查点字节。[确认实验设计](docs/carry-confirmation.md)
+
 ## CI 与依赖更新
 
 CI 在 PR、`main` 推送及手动触发时运行，覆盖 Windows/Linux 的 Python 3.10、3.12；3.12 安装原生测试依赖。每种组合运行普通、`-O`、`-OO` 回归、源码边界与格式检查，另在隔离环境验证 wheel 的安装、核心命令、卸载和重装。配置检查入口是 `python -B tools/check_maintenance.py`。
@@ -127,6 +140,19 @@ uv sync --project ../continual-foragax-agents --python 3.12 --frozen --no-dev
 The output directory must be outside the project and upstream source directories and must not exist for a new run. The runner saves a stage every 50,000 interactions, at the branch boundary and at each endpoint. Each stage contains the complete state, five typed traces and a stage record. Checkpoints use pickle protocol 5 and zlib compression. Resume reads checkpoints produced by this run. Pickle decoding constructs Python objects.
 
 After interruption, add `--resume` to the same command with unchanged source, configuration, dependencies, JAX 64-bit mode and output path. Execution continues from the latest complete stage, preserves earlier stages and rejects concurrent writers to the output directory. Per-index and root-level `summary.json` files contain the results. See the [recurrent-state pilot design](docs/en/carry-study.md).
+
+## Recurrent-state confirmation study
+
+Use the Linux native dependency environment above. `configs/carry-confirmation.json` fixes the upstream revision and experiment configuration. Prepare at least 50 GiB of free space, then run
+
+```bash
+../continual-foragax-agents/.venv/bin/python -B tools/run_carry_confirmation.py \
+  --upstream ../continual-foragax-agents --output ../carry-confirmation
+```
+
+The scheduler runs seeds in configuration order. Each worker finishes after saving a complete checkpoint, and the next process resumes from that checkpoint. Processes use at most eight available logical CPUs. Worker exit code 10 means a checkpoint was saved. The scheduler checks stage progress before continuing. Scheduler exit code 0 means all configured indices and the statistical summary are complete.
+
+Add `--resume` with the same source, configuration, dependencies and output path to continue an interrupted study. `execution/` stores worker commands, original logs, exit codes and resource records. The root `summary.json` contains the eight-trajectory inference and paired results. Analysis reads final traces and checks checkpoint bytes. [Confirmation design](docs/carry-confirmation.md)
 
 ## CI and dependency updates
 

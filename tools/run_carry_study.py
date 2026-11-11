@@ -54,6 +54,10 @@ TRACE_DTYPES = {
 SCALARS = ("num_episodes", "num_steps", "total_reward", "total_steps")
 
 
+class CheckpointReady(Exception):
+    """A complete stage is available for continuation in a new process."""
+
+
 def safe_path(path):
     path = Path(path).absolute()
     if any(is_linked_path(part) for part in (path, *path.parents)):
@@ -135,10 +139,10 @@ def verify_upstream(upstream, manifest_path, config):
 
 
 @contextmanager
-def study_lock(output):
+def study_lock(output, *, name=".run-lock"):
     import fcntl
 
-    with (output / ".run-lock").open("a+b") as stream:
+    with safe_path(output / name).open("a+b") as stream:
         try:
             fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError as exc:
@@ -296,7 +300,19 @@ def compiled_steps(glue, count):
     return jax.jit(lambda state: jax.lax.scan(step, state, None, length=count))
 
 
-def advance(glue, directory, phase, state, traces, endpoint, config, identity, metadata):
+def advance(
+    glue,
+    directory,
+    phase,
+    state,
+    traces,
+    endpoint,
+    config,
+    identity,
+    metadata,
+    *,
+    stop_after_checkpoint=False,
+):
     import jax
     import numpy as np
 
@@ -342,6 +358,8 @@ def advance(glue, directory, phase, state, traces, endpoint, config, identity, m
             save_stage(directory, phase, state, traces, config, identity, metadata)
             print(f"saved {phase} {step} in {time.monotonic() - saved:.2f}s", flush=True)
             saved_at = step
+            if stop_after_checkpoint:
+                raise CheckpointReady
     if saved_at != endpoint:
         raise ValueError("endpoint has no committed stage")
     return state, traces
@@ -394,7 +412,7 @@ def branch_start(executor, common, traces, phase, common_payload_sha256):
     return native_state(state, scalar_types(common)), result, metadata
 
 
-def run_index(index, directory, upstream, config, identity):
+def run_index(index, directory, upstream, config, identity, *, stop_after_checkpoint=False):
     import numpy as np
     from experiment.ExperimentModel import load
     from ml_instrumentation.Collector import Collector
@@ -425,7 +443,16 @@ def run_index(index, directory, upstream, config, identity):
     else:
         state, traces, metadata = load_stage(stage, config, identity)
     advance(
-        glue, directory, "common", state, traces, config["boundary"], config, identity, metadata
+        glue,
+        directory,
+        "common",
+        state,
+        traces,
+        config["boundary"],
+        config,
+        identity,
+        metadata,
+        stop_after_checkpoint=stop_after_checkpoint,
     )
     common_path = latest_stage(directory, "common")
     arms = {}
@@ -441,7 +468,16 @@ def run_index(index, directory, upstream, config, identity):
         else:
             state, traces, metadata = load_stage(stage, config, identity)
         advance(
-            glue, directory, phase, state, traces, config["endpoint"], config, identity, metadata
+            glue,
+            directory,
+            phase,
+            state,
+            traces,
+            config["endpoint"],
+            config,
+            identity,
+            metadata,
+            stop_after_checkpoint=stop_after_checkpoint,
         )
         arms[phase] = traces
     result = summarize_carry_pair(
@@ -457,21 +493,13 @@ def run_index(index, directory, upstream, config, identity):
     return result
 
 
-def main(argv=None):
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--upstream", type=Path, required=True)
-    parser.add_argument(
-        "--source-manifest", type=Path, default=ROOT / "configs/carry-upstream.json"
-    )
-    parser.add_argument("--config", type=Path, default=ROOT / "configs/carry-study.json")
-    parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--resume", action="store_true")
-    args = parser.parse_args(argv)
-    config = read_config(args.config)
-    upstream, output = safe_path(args.upstream), safe_path(args.output)
+def prepare_study(
+    upstream, source_manifest, config, output, *, resume=False, execution_profile=None
+):
+    upstream, output = safe_path(upstream), safe_path(output)
     if output.is_relative_to(ROOT) or output.is_relative_to(upstream):
         raise ValueError("study output must be outside the project and upstream source")
-    checked = verify_upstream(upstream, args.source_manifest, config)
+    checked = verify_upstream(upstream, source_manifest, config)
     sys.path.insert(0, str(upstream / "src"))
     import jax
 
@@ -494,8 +522,10 @@ def main(argv=None):
             (d.metadata["Name"], d.version) for d in importlib.metadata.distributions()
         ),
     }
+    if execution_profile is not None:
+        contract["execution_profile"] = execution_profile
     identity = digest(contract)
-    if args.resume:
+    if resume:
         previous = loads((output / "run.json").read_bytes())
         if previous["identity"] != identity:
             raise ValueError("resume requires identical source, configuration and environment")
@@ -504,6 +534,23 @@ def main(argv=None):
         write_json(
             output / "run.json", {"identity": identity, "contract": contract, "command": sys.argv}
         )
+    return upstream, output, identity
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--upstream", type=Path, required=True)
+    parser.add_argument(
+        "--source-manifest", type=Path, default=ROOT / "configs/carry-upstream.json"
+    )
+    parser.add_argument("--config", type=Path, default=ROOT / "configs/carry-study.json")
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--resume", action="store_true")
+    args = parser.parse_args(argv)
+    config = read_config(args.config)
+    upstream, output, identity = prepare_study(
+        args.upstream, args.source_manifest, config, args.output, resume=args.resume
+    )
     with study_lock(output):
         results = [
             run_index(index, output / f"index-{index}", upstream, config, identity)

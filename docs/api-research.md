@@ -2,9 +2,9 @@
 
 [English](en/api-research.md) · [研究设计](research.md)
 
-公开入口为 `intelligence_dynamics.research`。运行环境为 Python 3.10 或以上；本子包只使用标准库。下面每个 Python 代码块都可在包可导入的环境中独立运行。直接使用源码时，将项目的 `src` 目录加入 `PYTHONPATH`。
+公开入口为 `intelligence_dynamics.research`。运行环境为 Python 3.10 或以上。合成实验和确认统计使用标准库，原生轨迹窗口汇总使用 NumPy。下面每个 Python 代码块都可在包可导入的环境中独立运行。直接使用源码时，将项目的 `src` 目录加入 `PYTHONPATH`。
 
-结果对象使用 dataclass，可由 `dataclasses.asdict` 转为普通嵌套数据，再通过 `json.dumps(..., allow_nan=False)` 输出。JSON 会把元组表示为数组，把 `None` 表示为 `null`。
+合成实验的结果对象使用 dataclass，可由 `dataclasses.asdict` 转为普通嵌套数据，再通过 `json.dumps(..., allow_nan=False)` 输出。JSON 会把元组表示为数组，把 `None` 表示为 `null`。
 
 ## 1. 类型与验证
 
@@ -308,3 +308,26 @@ criteria = (
 result = assess({"accuracy": 0.8, "update_fraction": None}, criteria)
 print(tuple(item.passed for item in result.results), result.passed)
 ```
+
+## 9. 循环状态确认统计
+
+`intelligence_dynamics.research.confirmation.confirm_carry_effects(results, *, indices)` 返回 JSON 兼容字典。每条输入包含 `index`、`seed`、`run_identity` 和 `R_i_reset_minus_continued_post_mean_reward`，索引与种子须唯一，全部结果须对应同一运行身份。输出按 `indices` 的顺序排列，包含配对均值、正值与零值数量、单侧精确二项检验、正效应比例的双侧 95% Clopper–Pearson 区间和联合判据结果。
+
+```python
+from intelligence_dynamics.research.confirmation import confirm_carry_effects
+
+indices = tuple(range(25, 33))
+rows = [
+    {
+        "index": index,
+        "seed": index,
+        "run_identity": "example",
+        "R_i_reset_minus_continued_post_mean_reward": 0.1,
+    }
+    for index in indices
+]
+result = confirm_carry_effects(rows, indices=indices)
+print(result["positive_count"], result["criterion_met"])
+```
+
+`summarize_confirmation_pair(continued, reset, *, boundary=150000, endpoint=300000)` 接收与循环状态试点相同的五条 NumPy 轨迹，在配对汇总中增加边界后前 1,024 次交互和其余区间的平均奖励差。边界后必须包含超过 1,024 次交互。科学判据见[确认实验设计](carry-confirmation.md)。

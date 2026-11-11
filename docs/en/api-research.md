@@ -2,9 +2,9 @@
 
 [中文](../api-research.md) · [Research design](research.md)
 
-The public entry point is `intelligence_dynamics.research`. Python 3.10 or later is required; the subpackage uses only the standard library. Every Python block below runs independently in an environment where the package is importable. For a source checkout, add the project's `src` directory to `PYTHONPATH`.
+The public entry point is `intelligence_dynamics.research`. Python 3.10 or later is required. Synthetic experiments and confirmation inference use the standard library. Native trace-window summaries use NumPy. Every Python block below runs independently in an environment where the package is importable. For a source checkout, add the project's `src` directory to `PYTHONPATH`.
 
-Results are dataclasses. Convert them with `dataclasses.asdict`, then serialize with `json.dumps(..., allow_nan=False)`. JSON represents tuples as arrays and `None` as `null`.
+Synthetic experiment results are dataclasses. Convert them with `dataclasses.asdict`, then serialize with `json.dumps(..., allow_nan=False)`. JSON represents tuples as arrays and `None` as `null`.
 
 ## 1. Types and validation
 
@@ -308,3 +308,26 @@ criteria = (
 result = assess({"accuracy": 0.8, "update_fraction": None}, criteria)
 print(tuple(item.passed for item in result.results), result.passed)
 ```
+
+## 9. Recurrent-state confirmation inference
+
+`intelligence_dynamics.research.confirmation.confirm_carry_effects(results, *, indices)` returns a JSON-compatible dictionary. Each input contains `index`, `seed`, `run_identity` and `R_i_reset_minus_continued_post_mean_reward`. Indices and seeds must be unique, and all results must share a run identity. Output follows the order of `indices` and contains the paired mean, positive and zero counts, one-sided exact binomial test, two-sided 95% Clopper–Pearson interval for the positive-effect fraction, and joint criterion result.
+
+```python
+from intelligence_dynamics.research.confirmation import confirm_carry_effects
+
+indices = tuple(range(25, 33))
+rows = [
+    {
+        "index": index,
+        "seed": index,
+        "run_identity": "example",
+        "R_i_reset_minus_continued_post_mean_reward": 0.1,
+    }
+    for index in indices
+]
+result = confirm_carry_effects(rows, indices=indices)
+print(result["positive_count"], result["criterion_met"])
+```
+
+`summarize_confirmation_pair(continued, reset, *, boundary=150000, endpoint=300000)` accepts the same five NumPy traces as the carry pilot. It adds mean reward differences for the first 1,024 post-boundary interactions and the remaining interval. The post-boundary period must contain more than 1,024 interactions. See the [confirmation design](carry-confirmation.md) for the scientific criterion.
