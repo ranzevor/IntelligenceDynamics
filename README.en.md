@@ -10,7 +10,7 @@
 
 ![Conceptual illustration of three adaptive-system trajectories converging into a dynamical orbit](assets/cover.png)
 
-Version **0.1.0**. See the [version notes](CHANGELOG.md).
+Version **0.1.1**. See the [version notes](CHANGELOG.md).
 
 ## Purpose
 
@@ -76,7 +76,7 @@ For installation, verification, and removal of a locally built wheel, see [wheel
 |Scientific questions, hypotheses, and experimental design|[Research design](docs/en/research.md)|
 |Continued updates, state, and gating experiments|[Research results](docs/en/research-results.md)|
 |Native recurrent-state reset pilot|[Pilot design](docs/en/carry-study.md)|
-|Eight-trajectory recurrent-state confirmation|[Confirmation design](docs/en/carry-confirmation.md)|
+|Eight-trajectory recurrent-state confirmation|[Confirmation study](docs/en/carry-confirmation.md)|
 |Task, policy, search, and intervention APIs|[Research API](docs/en/api-research.md)|
 |Native models, checkpoint storage, and continuation|[Native model interfaces](docs/en/native.md)|
 |Local execution, queues, and cloud interfaces|[Execution management](docs/en/runtime.md)|

@@ -101,15 +101,23 @@ wheel 包含 `intelligence_dynamics` 模块、类型标识、Apache-2.0 正式�
 在新的虚拟环境中，进入 wheel 所在目录安装核心工具：
 
 ```bash
-python -m pip install --no-index --no-deps intelligence_dynamics-0.1.0-py3-none-any.whl
+python -m pip install --no-index --no-deps intelligence_dynamics-0.1.1-py3-none-any.whl
 intelligence-dynamics demo demo.jsonl
 intelligence-dynamics validate demo.jsonl
 intelligence-dynamics summarize demo.jsonl
 ```
 
+从 `0.1.0` 所在的现有虚拟环境就地升级时执行：
+
+```bash
+python -m pip install --upgrade --no-index --no-deps intelligence_dynamics-0.1.1-py3-none-any.whl
+```
+
 核心 wheel 无额外运行依赖。NPZ 和原生接口的额外依赖仍按本文与原生接口指南安装。Python API 可从虚拟环境内用 `import intelligence_dynamics` 调用，模块命令与控制台命令等价。
 
-卸载使用 `python -m pip uninstall intelligence-dynamics`。安装和卸载不迁移或删除已有 JSONL、队列数据库、运行日志或 checkpoint；保留这些数据及已使用的 wheel。恢复安装时在独立虚拟环境重新安装保存的 wheel，并先校验已有输入。数据与 checkpoint 兼容条件分别见[数据契约](data.md)和[原生接口](native.md)。
+软件版本号 `0.1.1` 标识 Python 包、CLI 与随附文档；测量流协议 `protocol_version: "0.1"`（JSONL 0.1）与检查点容器 `native-checkpoint-v1` 保持原有格式版本，因此 `0.1.0` 产生的 JSONL 测量流、队列数据库、运行日志和 checkpoint 无需迁移即可继续读取。使用 `--resume` 续跑已中断的 `run_carry_study.py` 或 `run_carry_confirmation.py` 输出目录时，程序会核对 `run.json` 中登记的项目源码摘要，因此必须使用发起该次运行的同一源码提交；已完成的 `NPZ` 轨迹与 `summary.json` 结果文件可跨版本读取。
+
+卸载使用 `python -m pip uninstall intelligence-dynamics`。安装、升级和卸载不迁移或删除已有 JSONL、队列数据库、运行日志或 checkpoint；保留这些数据及已使用的 wheel。恢复安装时在独立虚拟环境重新安装保存的 wheel，并先校验已有输入。数据与 checkpoint 兼容条件分别见[数据契约](data.md)和[原生接口](native.md)。
 
 ## 发行构建
 

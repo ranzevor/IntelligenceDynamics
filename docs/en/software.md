@@ -101,15 +101,23 @@ Build a local wheel as shown under [Build](#build). Example configurations and i
 In a fresh virtual environment, install from the directory containing the wheel:
 
 ```bash
-python -m pip install --no-index --no-deps intelligence_dynamics-0.1.0-py3-none-any.whl
+python -m pip install --no-index --no-deps intelligence_dynamics-0.1.1-py3-none-any.whl
 intelligence-dynamics demo demo.jsonl
 intelligence-dynamics validate demo.jsonl
 intelligence-dynamics summarize demo.jsonl
 ```
 
+To upgrade an existing `0.1.0` virtual environment in place:
+
+```bash
+python -m pip install --upgrade --no-index --no-deps intelligence_dynamics-0.1.1-py3-none-any.whl
+```
+
 The core wheel has no additional runtime dependencies. Install optional NPZ and native dependencies as described in this guide and the native-interface guide. Call the Python API with `import intelligence_dynamics` inside the environment; module and console commands are equivalent.
 
-Remove it with `python -m pip uninstall intelligence-dynamics`. Installation and removal do not migrate or delete existing JSONL, queue databases, run logs, or checkpoints. Keep those files and the wheel you used. Recover by reinstalling the saved wheel in an isolated environment and validating existing inputs first. See the [data contract](data.md) and [native interfaces](native.md) for data and checkpoint compatibility.
+Software version `0.1.1` identifies the Python package, CLI, and accompanying documentation, whereas the measurement stream `protocol_version: "0.1"` (`JSONL 0.1`) and `native-checkpoint-v1` retain their format identities. Existing `0.1.0` JSONL streams, queue databases, run logs, and checkpoints remain directly readable without migration. Resuming an interrupted `run_carry_study.py` or `run_carry_confirmation.py` output directory with `--resume` checks registered project source digests in `run.json` and therefore requires the exact source revision that started that run, whereas completed `NPZ` traces and `summary.json` files remain readable across versions.
+
+Remove it with `python -m pip uninstall intelligence-dynamics`. Installation, upgrade, and removal do not migrate or delete existing JSONL, queue databases, run logs, or checkpoints. Keep those files and the wheel you used. Recover by reinstalling the saved wheel in an isolated environment and validating existing inputs first. See the [data contract](data.md) and [native interfaces](native.md) for data and checkpoint compatibility.
 
 ## Release builds
 

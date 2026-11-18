@@ -1,8 +1,8 @@
 # Research results
 
-[中文](../research-results.md) · [Research design](research.md) · [Carry-reset pilot](carry-study.md)
+[中文](../research-results.md) · [Research design](research.md) · [Carry-reset pilot](carry-study.md) · [Confirmation study](carry-confirmation.md)
 
-This page summarizes experiments on continued updates, recurrent state and conditional updates. A2-P2 follows the current pilot design. The original A1, A2-P1 and E1 reports are recorded in the archive. [Intelligence-Dynamics archive](https://github.com/ranzevor/Intelligence-Dynamics/tree/da9b4bbd35e3d0df3fc116bb0f50d24356bfed79)
+This page summarizes experiments on continued updates, recurrent state and conditional updates. A2-P2 and the eight-trajectory confirmation study follow the current design. The original A1, A2-P1 and E1 reports are recorded in the archive. [Intelligence-Dynamics archive](https://github.com/ranzevor/Intelligence-Dynamics/tree/da9b4bbd35e3d0df3fc116bb0f50d24356bfed79)
 
 ## Continued updates over a lifetime
 
@@ -36,6 +36,8 @@ Two of four contrasts were positive, with mean `+0.0116466667`. The joint criter
 
 ## Single recurrent-state reset
 
+### Exploratory pilot (A2-P2, indices 23–24)
+
 A2-P2 compares native DRQN branches for indices 23 and 24. Each pair shares 150,000 environment interactions of prehistory, then either retains live recurrent state or resets it once to `None`. The table reports mean reward per interaction over `[150000, 300000)`. [Pilot design](carry-study.md)
 
 | Index | Retained state | Single state reset | Reset − retained |
@@ -43,7 +45,26 @@ A2-P2 compares native DRQN branches for indices 23 and 24. Each pair shares 150,
 | 23 | 0.8749733333 | 1.0653066667 | +0.1903333333 |
 | 24 | 0.5910800000 | 0.6528000000 | +0.0617200000 |
 
-The arithmetic mean of the paired differences is **+0.1260266667**. The reset branch has higher mean reward for both trajectories in the specified observation interval. The next stage uses independent trajectories to examine this difference, measuring short-term response, sustained reward and state resource use separately.
+The arithmetic mean of the exploratory pilot differences is **+0.1260266667** (`2/2` positive; `900,000` effective interactions, plus `100,000` interactions replayed during interruption recovery).
+
+### Eight-trajectory confirmation study (indices 25–32)
+
+The fixed confirmation study tested eight independent seeds 25–32 under the same 150,000-interaction common prehistory, configuration, and upstream commit, evaluating `R_i = mean reward(single reset) - mean reward(retained state)` over `[150000, 300000)` (`3,600,000` effective interactions, with `35,000` logged repeated recovery interactions reported separately without adding independent samples). [Confirmation study](carry-confirmation.md)
+
+| Index | Retained `[150k, 300k)` | Reset `[150k, 300k)` | Reset − retained | Early `[150k, 151024)` diff | Later `[151024, 300k)` diff |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 25 | 1.0970666667 | 1.0955733333 | -0.0014933333 | -0.1152343750 | -0.0007115240 |
+| 26 | 0.9166133333 | 0.6622133333 | -0.2544000000 | +0.0390625000 | -0.2564171410 |
+| 27 | 0.8318533333 | 0.9907333333 | +0.1588800000 | +2.2363281250 | +0.1446004726 |
+| 28 | 0.8502800000 | 1.0355066667 | +0.1852266667 | +0.0703125000 | +0.1860165396 |
+| 29 | 0.8567066667 | 1.1368400000 | +0.2801333333 | +0.0253906250 | +0.2818843304 |
+| 30 | 0.8676133333 | 1.0234666667 | +0.1558533333 | +0.0351562500 | +0.1566829556 |
+| 31 | 0.9450000000 | 0.7088933333 | -0.2361066667 | -0.1855468750 | -0.2364541940 |
+| 32 | 1.1091866667 | 0.9969733333 | -0.1122133333 | +0.1738281250 | -0.1141794651 |
+
+Across the eight confirmation trajectories, the arithmetic mean of `R_i` was **+0.0219850000**, with `4/8` positive, `0` zeros, and `4/8` negative. The one-sided exact binomial test gave `p = 0.63671875`, with a two-sided 95% Clopper–Pearson interval of `[0.157013, 0.842987]`. **The prespecified joint confirmation criterion was not met.** All eight seeds verified intervention confinement to `agent_state.carry` (`577,536` bytes → `0` bytes → `577,536` bytes after the first step).
+
+While reset branches tended to outperform retained branches over the first `1,024` steps (mean `+0.284912`, `6/8` positive) and first `25,000` steps (mean `+0.236880`, `7/8` positive), both arms continued online replay insertion and optimizer updates, causing rapid divergence in visited biome-switch sequences (Jaccard overlap `0.0473`–`0.0605`) and bidirectional outcomes over the full `150,000`-step continuation. A `2×2` factorial design crossing `retain/reset carry` with `continue/freeze updates` from the `150,000`-step checkpoint is needed to isolate live recurrent-state control from induced learning divergence.
 
 ## Conditional updates and corrupted feedback
 
