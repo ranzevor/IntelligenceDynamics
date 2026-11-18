@@ -71,7 +71,7 @@ uv sync --project ../continual-foragax-agents --python 3.12 --frozen --no-dev
 
 调度器按配置顺序执行种子，每个工作进程保存一个完整检查点后结束，下一个进程从该检查点继续。进程限制在八个可用逻辑 CPU 内。工作进程的退出码 10 表示检查点已保存，调度器核对阶段进展后继续；调度器返回 0 表示全部配置索引和统计汇总已完成。
 
-使用相同源码、配置、依赖和输出路径增加 `--resume` 可继续中断的实验。`execution/` 保存各工作进程的命令、原始日志、退出码和资源记录，根 `summary.json` 保存八轨迹统计与配对结果。分析直接读取最终轨迹并核对检查点字节。[确认实验设计](docs/carry-confirmation.md)
+使用相同源码、配置、依赖和输出路径增加 `--resume` 可继续中断的实验。`execution/` 保存各工作进程的命令、原始日志、退出码和资源记录，根 `summary.json` 保存八轨迹统计与配对结果。分析直接读取最终轨迹并核对检查点字节。[确认实验](docs/carry-confirmation.md)
 
 ## CI 与依赖更新
 
@@ -152,7 +152,7 @@ Use the Linux native dependency environment above. `configs/carry-confirmation.j
 
 The scheduler runs seeds in configuration order. Each worker finishes after saving a complete checkpoint, and the next process resumes from that checkpoint. Processes use at most eight available logical CPUs. Worker exit code 10 means a checkpoint was saved. The scheduler checks stage progress before continuing. Scheduler exit code 0 means all configured indices and the statistical summary are complete.
 
-Add `--resume` with the same source, configuration, dependencies and output path to continue an interrupted study. `execution/` stores worker commands, original logs, exit codes and resource records. The root `summary.json` contains the eight-trajectory inference and paired results. Analysis reads final traces and checks checkpoint bytes. [Confirmation design](docs/carry-confirmation.md)
+Add `--resume` with the same source, configuration, dependencies and output path to continue an interrupted study. `execution/` stores worker commands, original logs, exit codes and resource records. The root `summary.json` contains the eight-trajectory inference and paired results. Analysis reads final traces and checks checkpoint bytes. [Confirmation study](docs/en/carry-confirmation.md)
 
 ## CI and dependency updates
 
